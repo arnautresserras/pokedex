@@ -1,0 +1,440 @@
+/* ── A4 page shell ── */
+.page {
+  position: relative;
+  width: 210mm;
+  height: 297mm;
+  overflow: hidden;
+  background: var(--color-light);
+  box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  font-family: 'Lora', serif;
+  color: #1a1a1a;
+}
+
+/* ── Decorative type watermark ── */
+.watermark {
+  position: absolute;
+  bottom: 25mm;
+  right: 1mm;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 9rem;
+  font-weight: 900;
+  color: var(--color-primary);
+  opacity: 0.06;
+  letter-spacing: -0.02em;
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+}
+
+/* ── Header band ── */
+.header {
+  background: var(--color-primary);
+  color: #fff;
+  padding: 5mm 8mm 4mm;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0 6mm;
+  flex-shrink: 0;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-start;
+}
+
+.number {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  opacity: 0.85;
+  letter-spacing: 0.06em;
+}
+
+.types {
+  display: flex;
+  gap: 4px;
+}
+
+.name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2.8rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  margin: 0;
+  line-height: 1;
+  text-align: center;
+}
+
+.category {
+  font-family: 'Lora', serif;
+  font-size: 1rem;
+  opacity: 0.85;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ── Body ── */
+.body {
+  display: grid;
+  grid-template-columns: 80mm 1fr;
+  flex: 1;
+  min-height: 0;
+  border-bottom: 1.5px solid var(--color-primary);
+}
+
+/* Left column */
+.leftCol {
+  padding: 6mm 5mm 4mm 8mm;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-right: 1.5px solid var(--color-primary);
+}
+
+.artWrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.art {
+  max-width: 64mm;
+  max-height: 72mm;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));
+}
+
+.vitals {
+  width: 100%;
+  margin: 3mm 0 0;
+  padding: 0;
+}
+
+.vitalRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 4px;
+  padding: 2.5px 0;
+  border-bottom: 0.5px solid rgba(0,0,0,0.08);
+}
+
+.vitalRow dt {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  color: #777;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.vitalRow dd {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0;
+  color: #222;
+}
+
+.spriteGallery {
+  width: 100%;
+  margin-top: 3mm;
+  padding-top: 2.5mm;
+  border-top: 0.5px solid rgba(0,0,0,0.1);
+}
+
+.spriteGalleryLabel {
+  display: block;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+  margin-bottom: 1.5mm;
+}
+
+.spriteGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1mm 2mm;
+  place-items: center;
+}
+
+.spriteItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1mm;
+}
+
+.gallerySprite {
+  width: 24mm;
+  height: 24mm;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.spriteLabel {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Right column */
+.rightCol {
+  padding: 5mm 8mm 4mm 6mm;
+  display: flex;
+  flex-direction: column;
+  gap: 4mm;
+}
+
+/* ── Flavor texts ── */
+.flavorSection {
+  display: flex;
+  flex-direction: column;
+  gap: 2mm;
+}
+
+.flavor {
+  margin: 0;
+  padding: 3mm 4mm;
+  background: rgba(0,0,0,0.03);
+  border-left: 3px solid var(--color-primary);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: #333;
+  border-radius: 0 4px 4px 0;
+}
+
+.flavorText {
+  margin: 0;
+}
+
+.flavorVersion {
+  display: block;
+  text-align: right;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  font-style: normal;
+  color: #999;
+  margin-top: 2px;
+  letter-spacing: 0.04em;
+}
+
+/* ── Type matchups ── */
+.matchups {
+  display: flex;
+  flex-direction: column;
+  gap: 2mm;
+  padding: 3mm;
+  background: rgba(0,0,0,0.02);
+  border-radius: 4px;
+}
+
+.matchupGroup {
+  display: flex;
+  align-items: center;
+  gap: 2mm;
+}
+
+.matchupLabel {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  width: 20mm;
+  flex-shrink: 0;
+}
+
+.matchupBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  align-items: center;
+}
+
+
+.statsSection {
+  /* moves section below takes the remaining space */
+}
+
+.movesSection {
+  flex: 1;
+}
+
+.moveRow {
+  display: grid;
+  grid-template-columns: 16mm 1fr auto auto;
+  align-items: center;
+  gap: 2mm;
+  padding: 2px 0;
+  border-bottom: 0.5px solid rgba(0,0,0,0.06);
+}
+
+.moveRow > :first-child {
+  justify-self: start;
+}
+
+.moveName {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #222;
+}
+
+.movePower {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  color: #666;
+  text-align: right;
+  min-width: 6mm;
+}
+
+.moveLearnAt {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  color: #999;
+  text-align: right;
+  min-width: 11mm;
+}
+
+.statsHeading {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin: 0 0 4mm;
+}
+
+.bst {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 5px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.bstLabel {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  color: #666;
+  letter-spacing: 0.06em;
+}
+
+.bstValue {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--color-accent);
+}
+
+/* ── Footer band ── */
+.footer {
+  background: var(--color-primary);
+  padding: 3.5mm 8mm;
+  display: flex;
+  gap: 8mm;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+.footerLabel {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.65);
+  margin: 0 0 2mm;
+}
+
+.evoSection {
+  flex: 1;
+}
+
+.evoChain {
+  display: flex;
+  align-items: end;
+  gap: 2mm;
+}
+
+.evoStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.evoArrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.7);
+  text-align: center;
+  white-space: nowrap;
+  max-width: 20mm;
+  padding: 0 2mm;
+}
+
+.evoSprite {
+  width: 14mm;
+  height: 14mm;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+
+.evoName {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  text-transform: capitalize;
+  letter-spacing: 0.04em;
+}
+
+.evoBranches {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 2px;
+}
+
+.evoBranch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1mm;
+}
+
+.locations {
+  max-width: 60mm;
+}
+
+.locationList {
+  font-size: 0.6rem;
+  color: rgba(255,255,255,0.85);
+  margin: 0;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ── Print styles ── */
+@media print {
+  .page {
+    box-shadow: none;
+    break-after: page;
+  }
+}

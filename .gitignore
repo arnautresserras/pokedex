@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+.env.local
+
+# Cache populated at build time — commit if you want offline/zero-API builds
+# src/data/pokemon-cache.json
