@@ -42,8 +42,13 @@ body {
   text-decoration: underline;
 }
 
+.app-nav-sep {
+  color: #555;
+}
+
 .app-nav-hint {
-  color: #aaa;
+  margin-left: auto;
+  color: #666;
 }
 
 @page {
@@ -59,5 +64,9 @@ body {
   #root {
     padding: 0;
     gap: 0;
+  }
+
+  .app-nav {
+    display: none;
   }
 }

@@ -1,11 +1,12 @@
 import { getTypeColors } from '../utils/typeColors'
 import { getTypeMatchups, getOffensiveMatchups } from '../utils/typeChart'
 import { formatId, formatHeight, formatWeight, formatGender, paddedId } from '../utils/formatters'
+import { CATCH_LOCATIONS } from '../data/catchLocations'
 import TypeBadge from './TypeBadge'
 import StatBar from './StatBar'
 import styles from './PokemonPage.module.css'
 
-export default function PokemonPage({ pokemon }) {
+export default function PokemonPage({ pokemon, pageNum }) {
   const primaryType = pokemon.types[0]
   const colors = getTypeColors(primaryType)
   const artUrl = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${paddedId(pokemon.id)}.png`
@@ -17,6 +18,10 @@ export default function PokemonPage({ pokemon }) {
 
   const flavorTexts = pokemon.flavorTexts
     ?? (pokemon.flavorText ? [{ text: pokemon.flavorText, version: '' }] : [])
+
+  const locations = pokemon.locations?.length > 0
+    ? pokemon.locations
+    : (CATCH_LOCATIONS[pokemon.id] ?? [])
 
   return (
     <article
@@ -199,11 +204,15 @@ export default function PokemonPage({ pokemon }) {
         <div className={styles.evoSection}>
           <h3 className={styles.footerLabel}>Evolution</h3>
           <div className={styles.evoChain}>
-            {pokemon.evolutionChain.map((step, i) => {
+            {pokemon.evolutionChain
+              .filter(step => step.branches ? true : step.id <= 151)
+              .map((step, i) => {
               if (step.branches) {
+                const validBranches = step.branches.filter(b => b.id <= 151)
+                if (validBranches.length === 0) return null
                 return (
                   <span key="branches" className={styles.evoBranches}>
-                    {step.branches.map(branch => (
+                    {validBranches.map(branch => (
                       <span key={branch.id} className={styles.evoBranch}>
                         <span className={styles.evoArrow}>{branch.trigger}</span>
                         <img
@@ -219,9 +228,7 @@ export default function PokemonPage({ pokemon }) {
               }
               return (
                 <span key={step.id} className={styles.evoStep}>
-                  {i > 0 && (
-                    <span className={styles.evoArrow}>{step.trigger}</span>
-                  )}
+                  <span className={styles.evoArrow}>{i > 0 ? step.trigger : ''}</span>
                   <img
                     className={styles.evoSprite}
                     src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${step.id}.png`}
@@ -234,11 +241,15 @@ export default function PokemonPage({ pokemon }) {
           </div>
         </div>
 
-        {pokemon.locations?.length > 0 && (
+        {locations.length > 0 && (
           <div className={styles.locations}>
             <h3 className={styles.footerLabel}>Locations</h3>
-            <p className={styles.locationList}>{pokemon.locations.join(' · ')}</p>
+            <p className={styles.locationList}>{locations.join(' · ')}</p>
           </div>
+        )}
+
+        {pageNum && (
+          <span className={styles.pageNum}>{pageNum}</span>
         )}
       </footer>
     </article>

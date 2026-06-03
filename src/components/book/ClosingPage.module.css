@@ -1,0 +1,68 @@
+.page {
+  position: relative;
+  width: 210mm;
+  height: 297mm;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Lora', serif;
+}
+
+.content {
+  padding: 0 22mm;
+  width: 100%;
+}
+
+.label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #bbb;
+  margin: 0 0 5mm;
+  text-align: center;
+}
+
+.rule {
+  width: 16mm;
+  height: 2px;
+  background: #1a1a1a;
+  margin: 0 auto 8mm;
+}
+
+.body {
+  font-size: 0.92rem;
+  line-height: 1.75;
+  color: #444;
+  margin: 0 0 4.5mm;
+  text-align: left;
+}
+
+.sig {
+  margin-top: 8mm;
+  font-style: italic;
+  font-size: 0.88rem;
+  color: #888;
+  text-align: right;
+}
+
+.pageNumBar {
+  position: absolute;
+  bottom: 4mm;
+  right: 8mm;
+  font-family: 'Space Mono', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #bbb;
+  letter-spacing: 0.06em;
+}
+
+@media print {
+  .page {
+    box-shadow: none;
+    break-after: page;
+  }
+}

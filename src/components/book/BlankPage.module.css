@@ -1,0 +1,15 @@
+.page {
+  position: relative;
+  width: 210mm;
+  height: 297mm;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+}
+
+@media print {
+  .page {
+    box-shadow: none;
+    break-after: page;
+  }
+}

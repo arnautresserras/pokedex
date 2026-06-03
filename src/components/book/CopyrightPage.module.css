@@ -1,0 +1,60 @@
+.page {
+  position: relative;
+  width: 210mm;
+  height: 297mm;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+  display: flex;
+  align-items: flex-end;
+}
+
+.content {
+  padding: 0 16mm 16mm;
+  max-width: 150mm;
+}
+
+.title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  margin: 0 0 4mm;
+}
+
+.section {
+  margin-top: 5mm;
+}
+
+.sectionTitle {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #aaa;
+  margin: 0 0 1.5mm;
+}
+
+.body {
+  font-family: 'Lora', serif;
+  font-size: 0.72rem;
+  line-height: 1.65;
+  color: #555;
+  margin: 0;
+}
+
+.small {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem;
+  color: #ccc;
+  margin: 8mm 0 0;
+}
+
+@media print {
+  .page {
+    box-shadow: none;
+    break-after: page;
+  }
+}

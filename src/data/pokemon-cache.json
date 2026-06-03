@@ -11925,9 +11925,18 @@
         "trigger": null
       },
       {
-        "id": 106,
-        "name": "Hitmonlee",
-        "trigger": "Lv 20"
+        "branches": [
+          {
+            "id": 106,
+            "name": "Hitmonlee",
+            "trigger": "Lv 20"
+          },
+          {
+            "id": 107,
+            "name": "Hitmonchan",
+            "trigger": "Lv 20"
+          }
+        ]
       }
     ],
     "locations": [],
@@ -12036,9 +12045,18 @@
         "trigger": null
       },
       {
-        "id": 107,
-        "name": "Hitmonchan",
-        "trigger": "Lv 20"
+        "branches": [
+          {
+            "id": 106,
+            "name": "Hitmonlee",
+            "trigger": "Lv 20"
+          },
+          {
+            "id": 107,
+            "name": "Hitmonchan",
+            "trigger": "Lv 20"
+          }
+        ]
       }
     ],
     "locations": [],
@@ -14898,9 +14916,23 @@
         "trigger": null
       },
       {
-        "id": 134,
-        "name": "Vaporeon",
-        "trigger": "Water Stone"
+        "branches": [
+          {
+            "id": 134,
+            "name": "Vaporeon",
+            "trigger": "Water Stone"
+          },
+          {
+            "id": 135,
+            "name": "Jolteon",
+            "trigger": "Thunder Stone"
+          },
+          {
+            "id": 136,
+            "name": "Flareon",
+            "trigger": "Fire Stone"
+          }
+        ]
       }
     ],
     "locations": [],
@@ -15009,9 +15041,23 @@
         "trigger": null
       },
       {
-        "id": 134,
-        "name": "Vaporeon",
-        "trigger": "Water Stone"
+        "branches": [
+          {
+            "id": 134,
+            "name": "Vaporeon",
+            "trigger": "Water Stone"
+          },
+          {
+            "id": 135,
+            "name": "Jolteon",
+            "trigger": "Thunder Stone"
+          },
+          {
+            "id": 136,
+            "name": "Flareon",
+            "trigger": "Fire Stone"
+          }
+        ]
       }
     ],
     "locations": [],
@@ -15120,9 +15166,23 @@
         "trigger": null
       },
       {
-        "id": 135,
-        "name": "Jolteon",
-        "trigger": "Thunder Stone"
+        "branches": [
+          {
+            "id": 134,
+            "name": "Vaporeon",
+            "trigger": "Water Stone"
+          },
+          {
+            "id": 135,
+            "name": "Jolteon",
+            "trigger": "Thunder Stone"
+          },
+          {
+            "id": 136,
+            "name": "Flareon",
+            "trigger": "Fire Stone"
+          }
+        ]
       }
     ],
     "locations": [],
@@ -15231,9 +15291,23 @@
         "trigger": null
       },
       {
-        "id": 136,
-        "name": "Flareon",
-        "trigger": "Fire Stone"
+        "branches": [
+          {
+            "id": 134,
+            "name": "Vaporeon",
+            "trigger": "Water Stone"
+          },
+          {
+            "id": 135,
+            "name": "Jolteon",
+            "trigger": "Thunder Stone"
+          },
+          {
+            "id": 136,
+            "name": "Flareon",
+            "trigger": "Fire Stone"
+          }
+        ]
       }
     ],
     "locations": [],

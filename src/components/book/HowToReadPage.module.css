@@ -1,0 +1,423 @@
+.page {
+  position: relative;
+  width: 210mm;
+  height: 297mm;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  padding: 16mm 16mm 14mm;
+  box-sizing: border-box;
+  font-family: 'Lora', serif;
+  color: #1a1a1a;
+}
+
+/* ── Header ── */
+.header {
+  margin-bottom: 6mm;
+  flex-shrink: 0;
+}
+
+.label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #bbb;
+  margin: 0 0 2mm;
+}
+
+.heading {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2.4rem;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  margin: 0 0 4mm;
+  line-height: 1.05;
+  color: #1a1a1a;
+}
+
+.rule {
+  width: 12mm;
+  height: 3px;
+  background: #1a1a1a;
+}
+
+/* ── Main two-column layout ── */
+.main {
+  flex: 1;
+  display: flex;
+  gap: 7mm;
+  min-height: 0;
+}
+
+/* ── Diagram ── */
+.diagramWrap {
+  width: 74mm;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mock {
+  width: 74mm;
+  height: 104mm;
+  border: 1.5px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 1px;
+}
+
+/* Mock header band */
+.mockHeader {
+  background: #4a4a4a;
+  height: 15mm;
+  display: flex;
+  align-items: center;
+  padding: 0 2.5mm;
+  gap: 2mm;
+  flex-shrink: 0;
+}
+
+.mockHeaderLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5mm;
+  flex-shrink: 0;
+}
+
+.mockNum {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.48rem;
+  color: rgba(255,255,255,0.8);
+  display: flex;
+  align-items: center;
+  gap: 1.5mm;
+}
+
+.mockBadgeRow {
+  display: flex;
+  align-items: center;
+  gap: 1.5mm;
+}
+
+.mockBadge {
+  width: 10mm;
+  height: 3.5mm;
+  background: rgba(255,255,255,0.3);
+  border-radius: 2px;
+}
+
+.mockName {
+  flex: 1;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1rem;
+  font-weight: 900;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 1.5mm;
+  justify-content: center;
+}
+
+.mockCat {
+  font-family: 'Lora', serif;
+  font-size: 0.48rem;
+  color: rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  gap: 1mm;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Mock body */
+.mockBody {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.mockLeft {
+  width: 30mm;
+  border-right: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  padding: 2mm;
+  flex-shrink: 0;
+  gap: 2mm;
+}
+
+.mockArt {
+  flex: 1;
+  background: #f5f5f5;
+  border: 1px dashed #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2mm;
+  border-radius: 2px;
+}
+
+.mockArtLabel {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.42rem;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.mockVitals {
+  position: relative;
+  padding-top: 1mm;
+}
+
+.mockVitalRow {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.4rem;
+  color: #666;
+  border-bottom: 0.5px solid #eee;
+  padding: 1px 0;
+  line-height: 1.6;
+}
+
+.mockRight {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 2mm;
+  gap: 2mm;
+}
+
+.mockFlavor {
+  background: #f8f8f8;
+  border-left: 2px solid #bbb;
+  padding: 1.5mm 2mm;
+  position: relative;
+}
+
+.mockFlavorText {
+  font-family: 'Lora', serif;
+  font-size: 0.4rem;
+  font-style: italic;
+  color: #555;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.mockMatchups {
+  padding: 1.5mm 2mm;
+  background: #f5f5f5;
+  border-radius: 2px;
+  position: relative;
+}
+
+.mockMatchRow {
+  display: flex;
+  align-items: center;
+  gap: 1.5mm;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.38rem;
+  color: #888;
+  padding: 0.5px 0;
+}
+
+.mockPill {
+  display: inline-block;
+  width: 7mm;
+  height: 2.5mm;
+  background: #ccc;
+  border-radius: 2px;
+}
+
+.mockStats {
+  flex: 1;
+  position: relative;
+}
+
+.mockStatRow {
+  display: flex;
+  align-items: center;
+  gap: 1.5mm;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.38rem;
+  color: #888;
+  margin-bottom: 1.5mm;
+}
+
+.mockStatRow span {
+  width: 7mm;
+  flex-shrink: 0;
+}
+
+.mockBarTrack {
+  flex: 1;
+  height: 2.5mm;
+  background: #eee;
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.mockBarFill {
+  height: 100%;
+  background: #888;
+  border-radius: 1px;
+}
+
+/* Mock sprites (below vitals) */
+.mockSprites {
+  padding-top: 1.5mm;
+  border-top: 0.5px solid #eee;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.mockSpriteGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1mm;
+  margin-top: 1mm;
+}
+
+.mockSpriteCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5mm;
+}
+
+.mockSpriteBox {
+  width: 9mm;
+  height: 9mm;
+  background: #f0f0f0;
+  border: 0.5px dashed #ccc;
+  border-radius: 1px;
+}
+
+.mockSpriteLabel {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.32rem;
+  color: #bbb;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Mock footer band */
+.mockFooter {
+  background: #4a4a4a;
+  height: 16mm;
+  display: flex;
+  align-items: flex-start;
+  padding: 2.5mm 2.5mm;
+  gap: 3mm;
+  flex-shrink: 0;
+}
+
+.mockEvo {
+  flex: 1;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.38rem;
+  color: rgba(255,255,255,0.75);
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5mm;
+}
+
+.mockLocs {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.38rem;
+  color: rgba(255,255,255,0.75);
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5mm;
+  white-space: nowrap;
+}
+
+/* Callout number circles (on the diagram) */
+.callout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.5mm;
+  height: 4.5mm;
+  min-width: 4.5mm;
+  background: #c0392b;
+  color: #fff;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.36rem;
+  font-weight: 700;
+  border-radius: 50%;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* ── Legend ── */
+.legend {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.legendItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 2.5mm;
+}
+
+.legendNum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 5.5mm;
+  height: 5.5mm;
+  min-width: 5.5mm;
+  background: #c0392b;
+  color: #fff;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.55rem;
+  font-weight: 700;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 0.3mm;
+}
+
+.legendLabel {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #1a1a1a;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.legendDesc {
+  font-family: 'Lora', serif;
+  font-size: 0.67rem;
+  color: #666;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ── Page number ── */
+.pageNumBar {
+  position: absolute;
+  bottom: 4mm;
+  right: 8mm;
+  font-family: 'Space Mono', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #bbb;
+  letter-spacing: 0.06em;
+}
+
+@media print {
+  .page {
+    box-shadow: none;
+    break-after: page;
+  }
+}

@@ -21,11 +21,15 @@ const TYPE_DEFENSE = {
   dragon:   { weak: ['dragon'],                                          resist: ['fire', 'water', 'electric', 'grass'] },
 }
 
-const ALL_TYPES = [
+export const ALL_TYPES = [
   'normal', 'fire', 'water', 'electric', 'grass', 'ice',
   'fighting', 'poison', 'ground', 'flying', 'psychic',
   'bug', 'rock', 'ghost', 'dragon',
 ]
+
+export function getTypeMultiplier(attackType, defendType) {
+  return multiplierFor(attackType, defendType)
+}
 
 function multiplierFor(attackType, defendType) {
   const d = TYPE_DEFENSE[defendType] ?? {}

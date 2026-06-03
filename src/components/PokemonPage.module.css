@@ -348,6 +348,8 @@
   gap: 8mm;
   align-items: flex-start;
   flex-shrink: 0;
+  height: 40mm;
+  overflow: hidden;
 }
 
 .footerLabel {
@@ -375,6 +377,11 @@
   flex-direction: column;
   align-items: center;
   gap: 1px;
+  width: 90px;
+}
+
+.evoStep:first-of-type{
+  margin-left: -15px;
 }
 
 .evoArrow {
@@ -383,8 +390,8 @@
   color: rgba(255,255,255,0.7);
   text-align: center;
   white-space: nowrap;
-  max-width: 20mm;
   padding: 0 2mm;
+  height: 16px;
 }
 
 .evoSprite {
@@ -429,6 +436,17 @@
   margin: 0;
   line-height: 1.5;
   font-style: italic;
+}
+
+.pageNum {
+  position: absolute;
+  bottom: 4mm;
+  right: 8mm;
+  font-family: 'Space Mono', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.06em;
 }
 
 /* ── Print styles ── */
