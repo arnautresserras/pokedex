@@ -31,9 +31,12 @@ jobs:
       - run: npm ci
       - run: npm run verify
       - run: npm run build
-      # enablement:true switches the Pages source to "GitHub Actions" on the first run. A
-      # branch-based source can only serve the raw repo, which for a Vite app means an
-      # index.html pointing at unbuilt /src/main.jsx — a blank page.
+      # Settings → Pages → Source must be "GitHub Actions". It did NOT take effect from
+      # enablement:true here — the run went green while the site kept serving the branch, so
+      # it was set by hand. Left on only as a no-op safety net if Pages is ever reset.
+      # Source matters because a branch-based Pages site serves the repo verbatim, which for
+      # a Vite app is an index.html pointing at unbuilt /src/main.jsx: the browser asks for a
+      # module, gets GitHub's HTML 404, and reports a MIME type error.
       - uses: actions/configure-pages@v5
         with:
           enablement: true
