@@ -89,7 +89,10 @@ Hash routing is deliberate: GitHub Pages has no SPA rewrite, and this needs no 4
 
 ```
 /              → redirect to /play
-/play          → play app home / mode switcher
+/play          → play app home — the three-tile mode switcher
+/play/explore  → Explore (type rooms) — placeholder shell until Slice 3
+/play/story    → Story — placeholder shell until Slice 5
+/play/game     → Game ("Who's that Pokémon?") — placeholder shell until Slice 4
 /play/motion   → motion lab — the shared feedback primitives, for on-device checks
 /browse        → the whole book, stacked (full print run)
 /pokemon/:id   → single Pokémon page (design/iterate on one card)
@@ -149,13 +152,26 @@ Each page is its own component + co-located CSS Module, both declaring the `210m
 PlayApp.jsx          shell for /play/*; sets html[data-mode='play'] and blocks pinch/double-tap zoom
 play.css             global touch hardening + design tokens (scoped to html[data-mode='play'],
                      so App.css's #root print layout is left alone)
+modes.js             the three modes as data — id, Catalan label, colour triple; MODES drives
+                     the home tiles AND PlayApp's routes (mode id === path segment)
 motion/              the shared feedback layer — Tappable, Celebrate, SceneTransition,
                      useReducedMotion
+components/          ModeScreen (the shell every mode renders inside), HomeButton, ModeGlyph
 utils/playColors.js  type colours with the cache's post-Gen-I types resolved
 utils/playAssets.js  artUrl(id) / spriteUrl(id) → vendored files under public/pkmn/
 utils/onPokemonTap.js  the single "a Pokémon was tapped" call site, used by all three modes
-screens/             PlayHome (placeholder until the mode switcher lands), MotionLab
+screens/             PlayHome (the mode switcher), ModePlaceholder (stands in for a mode that
+                     isn't built yet), MotionLab
 ```
+
+**Every mode renders inside `ModeScreen`.** It owns the two corners — `HomeButton` top-left in every
+mode, a `controls` slot top-right for Story's small parent controls — and injects the mode's
+`--color-*` vars plus the entry transition. Don't place a home button by hand, don't hardcode a mode
+colour, and take a mode's identity from `modes.js` rather than restating it.
+
+Mode colours are deliberately **not** from `TYPE_COLORS`: a mode tile must not read as a type room.
+They keep the same `primary` / `light` / `accent` shape, so components still read only the three CSS
+custom properties.
 
 **Silent by design.** No `speechSynthesis`, no `AudioContext`, no `new Audio`, no `<audio>`, no
 `navigator.vibrate` — the whole experience is visual, the parent supplies the voice, and

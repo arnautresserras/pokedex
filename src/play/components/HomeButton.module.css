@@ -1,0 +1,17 @@
+.home {
+  /* Full-size tap target (the child uses this constantly), but the mark inside is smaller
+     than the target so it doesn't compete with the content it sits over. */
+  width: var(--play-target);
+  height: var(--play-target);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.ball {
+  width: 62%;
+  height: 62%;
+  display: block;
+  /* Reads on a pale story backdrop and on full-bleed hero art alike. */
+  filter: drop-shadow(0 0.4vmin 1.2vmin rgba(0, 0, 0, 0.45));
+}

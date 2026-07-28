@@ -11,14 +11,14 @@ Revised against the silent / parent-narrated / Catalan spec revision.
 |---|---|
 | 0 · Motion vocabulary spike | **Shipped**, as `/play/motion` — kept in the app rather than thrown away. Its question (is a silent reveal satisfying?) needs the daughters, not a dev. |
 | 1 · Foundations | **Done.** Built, deployed to Pages, verified. Three deviations recorded under the slice. |
-| 2 · Home / mode switcher | Next, unblocked. |
-| 3 · Explore | Unblocked. |
+| 2 · Home / mode switcher | **Built**, `verify` + build clean. Device check pending. Deviations recorded under the slice. |
+| 3 · Explore | Unblocked. Now has a route, a colour and a shell to grow into. |
 | 4 · Game | Unblocked, and the stronger candidate to take before 3 and 5 — see Sequencing. |
 | 5 · Story engine + forest story | Unblocked. |
 | 6 · PWA + device hardening | Not started. Its deploy half was pulled forward into Slice 1. |
 
-Nothing about the plan below has changed shape as a result of Slice 1 — the risks it names are
-still the risks.
+Nothing about the plan below has changed shape as a result of Slices 1–2 — the risks they name
+are still the risks.
 
 ## Decisions taken
 
@@ -160,12 +160,49 @@ offline-correct, and removes a third-party request. Verify Catalan glyphs render
 Routing section needs updating to match. *(Done — `CLAUDE.md` now documents two apps in one repo,
 the play tree, the silent-by-design rule, and the type-colour resolution.)*
 
-## Slice 2 — Home / mode switcher (≈half day)
+## Slice 2 — Home / mode switcher (≈half day) — **built, device check pending**
 
 - Three large tiles (Explore / Story / Game), each a distinct colour + pictogram, no text needed.
 - Persistent home affordance in the same corner position inside every mode.
 - Tap feedback uses the Slice 1 primitives — with no sound, the tile must visibly react or the tap
   reads as dead.
+
+**What landed.** `src/play/modes.js` (the three modes as data), `src/play/components/`
+(`ModeScreen`, `HomeButton`, `ModeGlyph`), a rewritten `PlayHome`, and `ModePlaceholder` on three
+new routes — `/play/explore`, `/play/story`, `/play/game`.
+
+**Five decisions worth keeping:**
+
+1. **Mode colour is its own palette, not `TYPE_COLORS`.** Blue / violet / amber, deliberately far
+   apart and deliberately outside the type palette: a mode tile must never read as a type room,
+   which is the very next screen Explore shows. They keep the `primary` / `light` / `accent` shape
+   so components still read only `--color-primary` / `--color-light` / `--color-accent`, exactly
+   like the print book's cards.
+2. **The three modes got placeholder routes.** "Home affordance in the same corner inside every
+   mode" isn't buildable — or checkable on the iPad — against three routes that don't render, and a
+   tile that goes nowhere is indistinguishable from a broken app to a child. Each route renders the
+   real shell with the mode's own pictogram; slices 3–5 replace the body, not the shell.
+3. **The corner is structural, not a convention.** `ModeScreen` owns both corners and renders
+   `HomeButton` itself, so a mode can't move it, restyle it, or forget it. Its `controls` slot is the
+   opposite corner, reserved for Story's small back/restart — which is why those two don't collide.
+4. **Pictograms preview the destination instead of symbolising the mode**: six coloured rooms (the
+   type-room index in miniature), an open book with a forest on the page, and — for Game — the
+   vendored art at `brightness(0)` plus a "?", i.e. the game screen shrunk to an icon. Nothing a
+   4-year-old has to be taught. All inline SVG or vendored assets, so there's nothing for a service
+   worker to miss.
+5. **Home keeps two deliberately small parent links** (motion lab, print book). The Slice 1
+   placeholder home was the only route to `/play/motion`, and losing it would have cost the Slice 0
+   spike its way onto the device. They use the same small-target deterrent the spec settles on for
+   Story's parent controls, tucked under the tiles rather than floating over one, so a stray tap
+   lands on a tile and not on a link out of the app.
+
+Catalan labels (`Explora` / `Contes` / `Endevina`) sit under each pictogram — secondary to it, on
+the same reasoning the spec gives for showing Pokémon names as text: the parent reads it, the child
+learns its shape.
+
+**Not yet verified** — needs the iPad, not the dev machine: pictogram legibility at lap distance,
+the tile grid in both orientations (landscape columns / portrait rows), and that a full-height
+`<button>` tile lays its glyph and label out correctly in iPad Safari.
 
 ## Slice 3 — Explore (≈1.5–2 days)
 
@@ -273,8 +310,9 @@ once 1 and 2 land — Game remains the cheapest path to something the daughters 
 it now doubles as the real test of whether silent feedback works, so there's a good argument for
 taking it before Story.
 
-With 0 and 1 done, **Slice 2 is the only thing gating everything else**, and it's half a day. After
-that the order is a judgement call, and Game is the recommended next step for the reason above.
+With 0, 1 and 2 done, **nothing gates anything**: 3, 4 and 5 can be taken in any order, each fills
+in the body of a shell that already exists, and 6 only needs one of them to be worth installing.
+**Game is the recommended next step** for the reason above.
 
 Rough total: **8–10 working days**. Cutting audio didn't buy time; it moved it into motion design,
 self-hosted typography, and Catalan authoring.

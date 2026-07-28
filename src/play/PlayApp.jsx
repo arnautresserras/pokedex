@@ -2,6 +2,8 @@ import { useLayoutEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import PlayHome from './screens/PlayHome'
 import MotionLab from './screens/MotionLab'
+import ModePlaceholder from './screens/ModePlaceholder'
+import { MODES } from './modes'
 import './play.css'
 
 /**
@@ -45,9 +47,14 @@ export default function PlayApp() {
     <div className="play-root">
       <Routes>
         <Route index element={<PlayHome />} />
+        {/* One route per mode, derived from the mode list so a mode's id, colour, pictogram
+            and URL can't drift apart. Slices 3–5 swap ModePlaceholder for the real screen. */}
+        {MODES.map(mode => (
+          <Route key={mode.id} path={mode.id} element={<ModePlaceholder mode={mode} />} />
+        ))}
         <Route path="motion" element={<MotionLab />} />
-        {/* Modes land here in slices 2–5. Anything unknown goes home rather than 404ing at a
-            child who can't read the message. */}
+        {/* Anything unknown goes home rather than 404ing at a child who can't read the
+            message. */}
         <Route path="*" element={<Navigate to="/play" replace />} />
       </Routes>
     </div>

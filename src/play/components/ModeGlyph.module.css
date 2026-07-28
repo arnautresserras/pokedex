@@ -1,0 +1,42 @@
+/* One sizing contract for all three glyphs: fill the box you're given, keep square-ish, and
+   never overflow it. Consumers size the box, not the glyph. */
+.glyph {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
+  overflow: visible;
+}
+
+/* --- game: silhouette + "?" -------------------------------------------------------------- */
+.game {
+  position: relative;
+  display: grid;
+  place-items: center;
+  /* A soft light pool behind the silhouette, so the black shape reads on the tile and the
+     staging matches the game's own reveal. */
+  background: radial-gradient(circle at 50% 52%, var(--color-light) 0%, transparent 68%);
+}
+
+.silhouette {
+  max-width: 78%;
+  max-height: 92%;
+  /* The game's own trick, borrowed for its icon. */
+  filter: brightness(0);
+  opacity: 0.88;
+}
+
+.question {
+  position: absolute;
+  right: 2%;
+  bottom: 4%;
+  font-family: var(--font-display);
+  font-weight: 900;
+  /* vmin, not a percentage: percentages resolve against the inherited font size, which has
+     nothing to do with how big the tile is. */
+  font-size: clamp(1.8rem, 8vmin, 5rem);
+  line-height: 0.8;
+  color: var(--play-ink);
+  text-shadow: 0 0.4vmin 1.2vmin rgba(0, 0, 0, 0.45);
+}

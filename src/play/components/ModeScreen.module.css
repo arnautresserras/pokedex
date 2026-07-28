@@ -1,0 +1,31 @@
+.screen {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.body {
+  height: 100%;
+  width: 100%;
+}
+
+/* The two corners. `.screen` sits inside `.play-root`'s safe-area padding, so these are
+   already clear of the notch and the home indicator without repeating env() here. */
+.home,
+.controls {
+  position: absolute;
+  top: var(--play-gap);
+  z-index: 20;
+}
+
+.home {
+  left: var(--play-gap);
+}
+
+.controls {
+  right: var(--play-gap);
+  display: flex;
+  align-items: center;
+  gap: var(--play-gap);
+}

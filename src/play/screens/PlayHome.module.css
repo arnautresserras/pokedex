@@ -1,55 +1,87 @@
 .home {
-  height: 100%;
+  /* SceneTransition gives this height/width 100%, so padding has to come out of that box. */
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   gap: var(--play-gap);
-  text-align: center;
   padding: var(--play-gap);
 }
 
-.art {
-  width: min(38vmin, 320px);
-  height: auto;
-  filter: drop-shadow(0 1.5vmin 3vmin rgba(0, 0, 0, 0.5));
-}
-
-.title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-size: clamp(2.5rem, 9vmin, 5rem);
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-
-.note {
-  margin: 0;
-  font-family: var(--font-body);
-  color: var(--play-ink-dim);
-  font-size: clamp(0.95rem, 2.4vmin, 1.35rem);
-}
-
-.links {
-  display: flex;
+/* One screenful, never scrolled: three equal tiles that follow the iPad's orientation.
+   Landscape gets columns, portrait gets rows — always three, always the same order, so the
+   position of a mode is learnable. */
+.tiles {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--play-gap);
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-top: var(--play-gap);
 }
 
-.link {
-  min-height: var(--play-target);
-  padding: 0 2.5rem;
+@media (orientation: portrait) {
+  .tiles {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3, 1fr);
+  }
+}
+
+.tile {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  padding: clamp(10px, 2.6vmin, 30px);
+  border-radius: var(--play-radius);
+  background: linear-gradient(158deg, var(--color-primary), var(--color-accent));
+  box-shadow: 0 1.2vmin 3.2vmin rgba(0, 0, 0, 0.42);
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: clamp(6px, 1.6vmin, 18px);
+  place-items: center;
+  overflow: hidden;
+}
+
+.glyphBox {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
   display: grid;
   place-items: center;
-  border-radius: var(--play-radius);
-  background: var(--play-surface);
-  color: var(--play-ink);
+}
+
+/* The label sits at the dark end of the gradient, which is what makes white legible on the
+   amber tile as well as the other two. */
+.label {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(1.1rem, 3vmin, 1.6rem);
+  font-weight: 900;
+  font-size: clamp(1.1rem, 4.4vmin, 2.6rem);
+  line-height: 1;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 0.2vmin 0.9vmin rgba(0, 0, 0, 0.45);
+}
+
+/* Parent-facing, and sized to be ignored by a child: small targets, low contrast, mono type,
+   tucked into the corner below the tiles rather than floating over one. */
+.parentLinks {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--play-gap);
+}
+
+.parentLink {
+  --tap-min: 2.3rem;
+  min-height: 2.3rem;
+  padding: 0 0.9rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--play-surface);
+  color: var(--play-ink-dim);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
   letter-spacing: 0.04em;
+  opacity: 0.65;
 }
