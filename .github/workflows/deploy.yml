@@ -1,0 +1,52 @@
+name: Deploy to GitHub Pages
+
+# The PWA half of Phase 1 can only be verified against an HTTPS origin — an iPad pointed at a
+# LAN dev server can't register a service worker — so the deploy lands early and every push
+# to master gives the iPad something to install.
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let a newer push cancel an in-flight deploy, but never interrupt a running one halfway.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run verify
+      - run: npm run build
+      # enablement:true switches the Pages source to "GitHub Actions" on the first run. A
+      # branch-based source can only serve the raw repo, which for a Vite app means an
+      # index.html pointing at unbuilt /src/main.jsx — a blank page.
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,48 @@
+.tappable {
+  /* Reset: this is usually a <button> but never looks like one. */
+  appearance: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  display: block;
+  /* Tap-target floor, overridable per consumer via --tap-min rather than by out-specifying
+     this rule. Story mode's parent controls are deliberately *small*, so the escape hatch is
+     part of the design, not a workaround. */
+  min-width: var(--tap-min, var(--play-target));
+  min-height: var(--tap-min, var(--play-target));
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  /* Release: ease-pop overshoots past 1, which is the "pop" — no extra keyframe needed. */
+  transition:
+    transform var(--motion-release) var(--ease-pop),
+    filter var(--motion-release) var(--ease-out),
+    box-shadow var(--motion-release) var(--ease-out);
+}
+
+.pressed {
+  transform: scale(var(--press-scale, 0.94));
+  filter: brightness(1.12);
+  /* Press must land immediately; only the release is allowed to be leisurely. */
+  transition-duration: var(--motion-tap);
+  transition-timing-function: var(--ease-out);
+}
+
+/* Reduced motion: substitute, don't remove. An instant flash + ring still says "got it". */
+.reduced {
+  transition: none;
+}
+
+.reduced.pressed {
+  transform: none;
+  filter: brightness(1.45) saturate(1.2);
+  box-shadow: 0 0 0 6px var(--play-ink) inset;
+}
+
+.tappable:focus-visible {
+  outline: 4px solid var(--play-ink);
+  outline-offset: 3px;
+}

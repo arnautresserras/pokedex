@@ -1,0 +1,167 @@
+.lab {
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: var(--play-gap) var(--play-gap) 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--play-gap) * 1.5);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--play-gap);
+}
+
+.back {
+  --tap-min: 3.2rem;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 50%;
+  background: var(--play-surface);
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  line-height: 1;
+  padding-bottom: 0.25rem;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: clamp(1.4rem, 4vmin, 2.2rem);
+}
+
+.flag {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: var(--play-surface);
+  color: var(--play-ink-dim);
+}
+
+.flag[data-on='true'] {
+  background: #f4d03f;
+  color: #17170f;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1rem, 2.8vmin, 1.4rem);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--play-ink);
+}
+
+.hint {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.85rem, 2vmin, 1.05rem);
+  color: var(--play-ink-dim);
+}
+
+/* 1 — tap tiles */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--play-gap);
+}
+
+.tile {
+  aspect-ratio: 1;
+  min-height: var(--play-target);
+  border-radius: var(--play-radius);
+  background: linear-gradient(160deg, var(--color-primary), var(--color-accent));
+  display: grid;
+  place-items: center;
+  box-shadow: 0 1vmin 2.5vmin rgba(0, 0, 0, 0.35);
+}
+
+.tileSprite {
+  width: 70%;
+  image-rendering: pixelated;
+}
+
+/* 2 — celebration */
+.celebrateBox {
+  min-height: 46vmin;
+  border-radius: var(--play-radius);
+  background: var(--play-surface);
+}
+
+.celebrateTarget {
+  width: 34vmin;
+  height: 34vmin;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 45%, var(--color-light), var(--color-primary) 78%);
+  display: grid;
+  place-items: center;
+}
+
+.celebrateArt {
+  width: 84%;
+}
+
+/* 3 — scene transition */
+.sceneFrame {
+  height: 44vmin;
+  border-radius: var(--play-radius);
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--color-light), var(--color-primary));
+}
+
+.scene {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  grid-template-rows: 1fr auto;
+  padding: var(--play-gap);
+}
+
+.sceneArt {
+  max-height: 100%;
+  max-width: 100%;
+  min-height: 0;
+}
+
+.sceneName {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(1.5rem, 5vmin, 3rem);
+  text-transform: uppercase;
+  color: var(--color-accent);
+  letter-spacing: 0.03em;
+}
+
+.sceneControls {
+  display: flex;
+  gap: var(--play-gap);
+  justify-content: center;
+}
+
+.stepButton {
+  width: var(--play-target);
+  height: var(--play-target);
+  border-radius: 50%;
+  background: var(--play-surface);
+  display: grid;
+  place-items: center;
+  font-size: 2.4rem;
+  line-height: 1;
+  padding-bottom: 0.4rem;
+}

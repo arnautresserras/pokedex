@@ -1,0 +1,40 @@
+.scene {
+  height: 100%;
+  width: 100%;
+}
+
+.forward {
+  animation: enterForward var(--motion-scene) var(--ease-out) both;
+}
+
+.back {
+  animation: enterBack var(--motion-scene) var(--ease-out) both;
+}
+
+.up {
+  animation: enterUp var(--motion-scene) var(--ease-pop) both;
+}
+
+.none {
+  animation: fadeIn var(--motion-base) var(--ease-out) both;
+}
+
+@keyframes enterForward {
+  from { opacity: 0; transform: translateX(6%) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes enterBack {
+  from { opacity: 0; transform: translateX(-6%) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes enterUp {
+  from { opacity: 0; transform: translateY(8%) scale(0.94); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

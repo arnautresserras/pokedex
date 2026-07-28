@@ -1,16 +1,20 @@
-import { BrowserRouter, Routes, Route, Navigate, useParams, Link } from 'react-router-dom'
-import PokemonPage from './components/PokemonPage'
+import { lazy, Suspense } from 'react'
+import { HashRouter, Routes, Route, Navigate, Outlet, useParams, Link } from 'react-router-dom'
 import { useAllPokemon, usePokemon } from './hooks/usePokemon'
-import BlankPage from './components/book/BlankPage'
-import HalfTitlePage from './components/book/HalfTitlePage'
-import FullTitlePage from './components/book/FullTitlePage'
-import CopyrightPage from './components/book/CopyrightPage'
-import ForewordPage from './components/book/ForewordPage'
-import HowToReadPage from './components/book/HowToReadPage'
-import PokedexGridPage from './components/book/PokedexGridPage'
-import AppendixPage from './components/book/AppendixPage'
-import ClosingPage from './components/book/ClosingPage'
+import PlayApp from './play/PlayApp'
 import './App.css'
+
+// The print book is lazy-loaded: the iPad should not download 160 A4 pages to play a guessing game.
+const PokemonPage    = lazy(() => import('./components/PokemonPage'))
+const BlankPage      = lazy(() => import('./components/book/BlankPage'))
+const HalfTitlePage  = lazy(() => import('./components/book/HalfTitlePage'))
+const FullTitlePage  = lazy(() => import('./components/book/FullTitlePage'))
+const CopyrightPage  = lazy(() => import('./components/book/CopyrightPage'))
+const ForewordPage   = lazy(() => import('./components/book/ForewordPage'))
+const HowToReadPage  = lazy(() => import('./components/book/HowToReadPage'))
+const PokedexGridPage = lazy(() => import('./components/book/PokedexGridPage'))
+const AppendixPage   = lazy(() => import('./components/book/AppendixPage'))
+const ClosingPage    = lazy(() => import('./components/book/ClosingPage'))
 
 const SECTION_LINKS = [
   { to: '/page/half-title',   label: 'Half-title' },
@@ -25,6 +29,8 @@ const SECTION_LINKS = [
 function Nav() {
   return (
     <nav className="app-nav">
+      <Link to="/play">Play</Link>
+      <span className="app-nav-sep">·</span>
       <Link to="/browse">Full book</Link>
       <span className="app-nav-sep">·</span>
       {SECTION_LINKS.map(({ to, label }) => (
@@ -79,16 +85,30 @@ function BookPage() {
   }
 }
 
+/** Everything print: dev nav on top, one Suspense boundary around the lazy page components. */
+function BookLayout() {
+  return (
+    <>
+      <Nav />
+      <Suspense fallback={<p className="app-loading">Loading the book…</p>}>
+        <Outlet />
+      </Suspense>
+    </>
+  )
+}
+
 export default function App() {
   return (
-    <BrowserRouter>
-      <Nav />
+    <HashRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/browse" replace />} />
-        <Route path="/browse" element={<BrowsePage />} />
-        <Route path="/pokemon/:id" element={<SinglePage />} />
-        <Route path="/page/:slug" element={<BookPage />} />
+        <Route path="/" element={<Navigate to="/play" replace />} />
+        <Route path="/play/*" element={<PlayApp />} />
+        <Route element={<BookLayout />}>
+          <Route path="/browse" element={<BrowsePage />} />
+          <Route path="/pokemon/:id" element={<SinglePage />} />
+          <Route path="/page/:slug" element={<BookPage />} />
+        </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
