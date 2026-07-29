@@ -41,7 +41,10 @@
   background: linear-gradient(158deg, var(--color-primary), var(--color-accent));
   box-shadow: 0 0.6vmin 1.8vmin rgba(0, 0, 0, 0.36);
   display: grid;
-  grid-template-rows: 1fr auto;
+  /* Same `minmax(0, 1fr)` as `TypeRoom`'s cell — see the note there. The tile's height is definite
+     here, so the label has room either way, but a glyph that can't be squeezed is a label that
+     can't be clipped. */
+  grid-template-rows: minmax(0, 1fr) auto;
   place-items: center;
   gap: clamp(2px, 0.8vmin, 8px);
   overflow: hidden;

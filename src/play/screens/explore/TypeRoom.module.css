@@ -68,7 +68,13 @@
   background: var(--color-light);
   box-shadow: 0 0.5vmin 1.4vmin rgba(0, 0, 0, 0.3);
   display: grid;
-  grid-template-rows: 1fr auto;
+  /* `minmax(0, 1fr)`, never a bare `1fr`: a bare one is `minmax(auto, 1fr)`, so the sprite row's
+     floor is the sprite's own intrinsic height *and* the track's size becomes content-dependent —
+     which makes `.sprite`'s `height: 100%` an indefinite percentage that WebKit resolves to the
+     96px art scaled to the cell's width. The row then claims the whole square and pushes the name
+     out through the bottom, where `overflow: hidden` eats it. With a 0 minimum the name row is
+     subtracted first and the sprite letterboxes into whatever is left. */
+  grid-template-rows: minmax(0, 1fr) auto;
   place-items: center;
   gap: 2px;
   overflow: hidden;

@@ -22,7 +22,9 @@
   background: var(--color-light);
   box-shadow: 0 0.5vmin 1.6vmin rgba(0, 0, 0, 0.35);
   display: grid;
-  grid-template-rows: 1fr auto;
+  /* `minmax(0, 1fr)` for the same reason as `TypeRoom`'s cell — see the note there. A bare `1fr`
+     lets the art's intrinsic height set the track floor and pushes the name out of the square. */
+  grid-template-rows: minmax(0, 1fr) auto;
   place-items: center;
   gap: 2px;
   overflow: hidden;
