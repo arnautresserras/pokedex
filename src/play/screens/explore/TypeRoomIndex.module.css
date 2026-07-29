@@ -46,8 +46,6 @@
   gap: clamp(2px, 0.8vmin, 8px);
   overflow: hidden;
   color: #fff;
-  /* Glyph holes punch through to the tile, not to the screen behind it. */
-  --glyph-cut: var(--color-primary);
 }
 
 /* The room's most recognisable member, backgrounded: present enough to say "someone lives

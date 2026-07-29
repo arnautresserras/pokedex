@@ -21,9 +21,7 @@ export default function PlayTypeBadge({ type, className = '' }) {
 
   const { primary, accent } = getPlayTypeColors(type)
 
-  // `--glyph-cut` is the badge fill, so a ghost's eyes punch through to the pill rather than
-  // to whatever is behind it.
-  const vars = { '--badge-primary': primary, '--badge-accent': accent, '--glyph-cut': primary }
+  const vars = { '--badge-primary': primary, '--badge-accent': accent }
 
   return (
     <span className={[styles.badge, className].filter(Boolean).join(' ')} style={vars}>

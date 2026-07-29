@@ -17,8 +17,6 @@
   justify-content: center;
   gap: clamp(8px, 1.6vmin, 18px);
   color: #fff;
-  /* Glyph holes punch through to the header's gradient, not to black. */
-  --glyph-cut: var(--color-primary);
 }
 
 .glyphBox {
