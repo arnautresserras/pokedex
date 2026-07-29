@@ -4,7 +4,7 @@
  * pre-reader who can't report a bug. Not a test runner — see docs/phase-1-plan.md.
  *
  *   1. a missing vendored image  → a blank cell the child just taps again
- *   2. a broken story link       → a dead end mid-narration (added with the story engine)
+ *   2. a broken story graph      → a dead end mid-narration, or an encounter with nobody in it
  *   3. an audio API creeping in  → "silent by design" quietly violated months later
  *   4. a missing home-screen icon → the installed tile becomes a screenshot of a dark screen
  *
@@ -111,26 +111,51 @@ async function checkSilence() {
 
 async function checkStories() {
   const storyDir = path.join(ROOT, 'src', 'play', 'stories')
-  if (!(await exists(storyDir))) return // no stories yet — lands in slice 5
+  if (!(await exists(storyDir))) return // no stories yet — landed in slice 5
 
   const { STORIES } = await import(pathToFileURL(path.join(storyDir, 'index.js')).href)
+  const { poolMembers } = await import(
+    pathToFileURL(path.join(ROOT, 'src', 'play', 'utils', 'encounters.js')).href
+  )
+
   for (const story of Object.values(STORIES ?? {})) {
     const scenes = story.scenes ?? {}
     if (!scenes[story.start ?? 'start']) fail(`story "${story.id}" has no start scene`)
+    const reached = new Set([story.start])
     for (const [key, scene] of Object.entries(scenes)) {
       const where = `story "${story.id}" scene "${key}"`
       const narration = scene.narration ?? []
-      if (scene.type !== 'encounter' && !narration.some(line => line?.trim())) {
-        fail(`${where} has no narration`)
+      if (!narration.some(line => line?.trim())) {
+        fail(`${where} has no narration — the parent would have nothing to read`)
       }
       for (const choice of scene.choices ?? []) {
         if (!scenes[choice.next]) fail(`${where} choice → unknown scene "${choice.next}"`)
+        else reached.add(choice.next)
         if (!choice.icon) fail(`${where} has a choice with no icon — children can't read labels`)
+        if (!story.choiceLabels?.[choice.icon]) {
+          fail(`${where} choice icon "${choice.icon}" has no label in ${story.lang}`)
+        }
       }
       const terminal = !(scene.choices ?? []).length
       if (terminal && scene.type !== 'encounter') {
         fail(`${where} is a dead end but is not an encounter`)
       }
+      /**
+       * An encounter's pool is a place, and a place that resolves to nobody ends the story on
+       * an empty stage — the exact "dead end mid-narration" this check exists for, just one
+       * layer further in than a broken `next`. A typo in a route name is all it takes.
+       */
+      if (scene.type === 'encounter') {
+        if (!scene.pool) fail(`${where} is an encounter with no pool`)
+        else if (!poolMembers(cache, scene.pool).length) {
+          fail(`${where} pool "${scene.pool}" resolves to nobody — check STORY_POOLS`)
+        }
+      }
+    }
+    for (const key of Object.keys(scenes)) {
+      // An unreachable scene is authored prose nobody will ever hear — a content bug, not a
+      // crash, and invisible without walking the graph.
+      if (!reached.has(key)) fail(`story "${story.id}" scene "${key}" is unreachable`)
     }
   }
 }

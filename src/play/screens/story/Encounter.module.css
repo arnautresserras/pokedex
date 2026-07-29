@@ -1,0 +1,118 @@
+.encounter {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+}
+
+/* The light pool in the Pokémon's own type colour — the same device Explore's card and Game's
+   reveal use, and the reason a Pikachu makes the forest look different from a Weedle. */
+.encounter::before {
+  content: '';
+  position: absolute;
+  inset: 6% 4%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--color-primary), transparent 66%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.arrival {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  justify-items: center;
+  align-items: center;
+  gap: clamp(4px, 1.2vmin, 14px);
+}
+
+.celebrate {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+}
+
+/* Sized absolutely, not as a percentage: `Celebrate` centres its child at the child's own size,
+   so a percentage would resolve against the 512px source. Same note as the card's hero. */
+.artTap {
+  width: clamp(130px, 42vmin, 480px);
+  height: clamp(130px, 42vmin, 480px);
+  display: grid;
+  place-items: center;
+}
+
+.art {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 1.4vmin 3vmin rgba(0, 0, 0, 0.5));
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(4px, 1.2vmin, 12px);
+  /* Clear of the arrow, which sits in the same bottom row on the right. */
+  padding: 0 calc(var(--play-target) + var(--play-gap));
+}
+
+/* The end of the parent's sentence, so it's sized like the card's name rather than like a
+   caption — read out loud from a chair away, after a colon. */
+.name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(1.6rem, 6vmin, 4rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--play-ink);
+  text-shadow: 0 0.3vmin 1.4vmin rgba(0, 0, 0, 0.55);
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(5px, 1.2vmin, 12px);
+}
+
+/* Bottom-right of the encounter panel, the same corner Game's "next" uses and for the same
+   reason — the two modes should feel like they were built by the same hand. */
+.another {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: var(--play-target);
+  height: var(--play-target);
+  border-radius: 50%;
+  filter: drop-shadow(0 0.4vmin 1.2vmin rgba(0, 0, 0, 0.45));
+  animation: anotherIn var(--motion-base) var(--ease-pop) both;
+}
+
+.another svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes anotherIn {
+  from { opacity: 0; transform: scale(0.7); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .another {
+    animation: none;
+  }
+}

@@ -127,7 +127,10 @@ Hash routing is deliberate: GitHub Pages has no SPA rewrite, and this needs no 4
 /play/explore/:type          → that type's grid
 /play/explore/:type/:id      → one Pokémon's card (`:type` is the room you came from,
                                which is not always the Pokémon's own type)
-/play/story                  → Story — placeholder shell until Slice 5
+/play/story                  → Story — redirects into the only story (a picker lands with a second)
+/play/story/:storyId         → that story. The *scene* is state, not a route: the path taken is
+                               what gives a scene meaning, and the parent's back must mean
+                               "previous scene", not "previous URL"
 /play/game                   → Game — "Who's that Pokémon?". One screen; a round is state, not
                                a route, so anything deeper redirects here
 /play/motion                 → motion lab — the shared feedback primitives, for on-device checks
@@ -201,19 +204,29 @@ motion/              the shared feedback layer — Tappable, Celebrate, SceneTra
                      useReducedMotion
 components/          ModeScreen (the shell every mode renders inside), HomeButton, BackButton,
                      ModeGlyph, TypeGlyph (15 type pictograms), PlayTypeBadge
+stories/             the story content. `forest.js` is the *graph* (scenes, choices, backdrops,
+                     encounter pool), `forest.ca.js` is the *prose*, `index.js` joins them into
+                     STORIES. A new language is a text file; a new story is both plus one line
 utils/playColors.js  type colours with the cache's post-Gen-I types resolved
 utils/playAssets.js  artUrl(id) / spriteUrl(id) → vendored files under public/pkmn/
 utils/traits.js      height / weight / speed as 1-of-5 levels, ranked across all 151
 utils/evolution.js   a chain reduced to drawable stages — Gen I filter + Eevee's branch shape
 utils/rounds.js      buildRound() — one Game round: an answer + two *visually distinct*
                      distractors, distinctness inferred from family / primary type / height band
+utils/encounters.js  CATCH_LOCATIONS inverted (route → ids) + STORY_POOLS (a story place → its
+                     Gen I locations) → pickEncounter(). A pool is a *place*, never a cast list
 utils/onPokemonTap.js  the single "a Pokémon was tapped" call site, used by all three modes
-screens/             PlayHome (the mode switcher), ModePlaceholder (stands in for a mode that
-                     isn't built yet), MotionLab
+screens/             PlayHome (the mode switcher), ModePlaceholder (the fallback for a mode with
+                     no MODE_SCREENS entry — unreachable from MODES now all three are built),
+                     MotionLab
 screens/explore/     Explore (owns the frame and the sub-routing), TypeRoomIndex, TypeRoom,
                      PokemonCard, TraitMeters, EvolutionStrip
 screens/game/        Game (frame + round state), SilhouetteStage (the question and the reveal),
                      AnswerOptions (the three picture answers)
+screens/story/       Story (frame, routing, scene state machine), StoryScene (the shared frame
+                     every scene renders in — backdrop, narration panel, action slot),
+                     Narration (the teleprompter), SceneChoices + ChoiceGlyph (the picture
+                     choices), Encounter, Backdrop (5 backdrops from 3 shapes), ParentControls
 ```
 
 **Every mode renders inside `ModeScreen`.** It owns the two corners — `HomeButton` top-left in every
@@ -266,6 +279,32 @@ is the only place that logic belongs. **No score, no streak, no timer, no fail s
 reveals the answer and celebrates too. And the reveal must stay legible with motion off: it carries
 four signals (colour fill, `Celebrate`, the stage's light pool switching to the Pokémon's type
 colour, the `?` becoming the name) and only one of them is animation.
+
+**Story's rules.** The mode is an **engine over content**: nothing in `screens/story/` knows what a
+forest is, and a second story must stay a graph file, a text file and one line in
+`stories/index.js`. So:
+
+- **The graph and the prose are separate files.** `forest.js` holds ids, choices, backdrops and
+  the encounter pool; `forest.ca.js` holds only words (narration keyed by scene, choice labels
+  keyed by pictogram id). A translation copies the words, so it can't fork the branching.
+- **`src/play/stories/` and `utils/encounters.js` are data only, with explicit `.js` import
+  extensions** — no JSX, no `import.meta.env`, no extensionless imports. `scripts/verify-play.js`
+  imports them under plain Node to walk the graph, and that check is the reason authored prose
+  can't break silently.
+- **Narration is authored as a list of paragraphs**, ≤3 blocks and ~340 characters per narrated
+  scene (~200 for an encounter). That's the teleprompter panel's budget, not a style preference:
+  over it, the type shrinks below arm's-length legibility or the panel scrolls mid-sentence. An
+  encounter's last line ends on a **colon** — the Pokémon's name completes the sentence.
+- **Choices are pictures of places, not arrows.** Left/right needs teaching; sun-versus-shade and
+  up-versus-down don't. Every choice needs an entry in `ChoiceGlyph` (add a case, don't extend a
+  generated table) and a label for the parent. An unknown icon renders a magenta placeholder on
+  purpose — a blank tile would be indistinguishable from a working one.
+- **An encounter pool is a place.** `STORY_POOLS` maps a story place to real Gen I location names
+  and `CATCH_LOCATIONS` supplies the cast; never hand-pick ids, and don't invent habitat sub-pools
+  the data doesn't have.
+- **The scene is state and the visited path is an array.** Back pops it, restart empties it,
+  neither touches history. The parent's controls are deliberately small (`--tap-min: 0`) and that
+  size is the whole access control — no dialogs, no long-press gates.
 
 ### Type theming
 

@@ -1,0 +1,65 @@
+/* Fills whatever it's placed in and never intercepts a tap — it's scenery, and every tappable
+   thing in the mode sits above it. */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(178deg, var(--sky-top), var(--sky-bottom));
+}
+
+.art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.motes,
+.vignette {
+  position: absolute;
+  inset: 0;
+}
+
+.mote {
+  position: absolute;
+  width: var(--mote-size);
+  height: var(--mote-size);
+  border-radius: 50%;
+  background: #fffbe8;
+  opacity: 0.5;
+  filter: blur(0.2vmin);
+  animation-name: drift;
+  animation-timing-function: var(--ease-in-out);
+  animation-iteration-count: infinite;
+}
+
+/* Slow, small, and never in the reading path: this is the one continuously animated thing in
+   the app, so it has to be ignorable. A scene that visibly *breathes* keeps a 4-year-old's
+   attention on the screen while an adult reads three paragraphs — but anything faster would
+   compete with the narration for it. */
+@keyframes drift {
+  0%   { transform: translate3d(0, 0, 0); opacity: 0.18; }
+  50%  { transform: translate3d(1.6vmin, -3.2vmin, 0); opacity: 0.6; }
+  100% { transform: translate3d(0, 0, 0); opacity: 0.18; }
+}
+
+/* Darkens the bottom (under the narration panel) and the two top corners (under the home
+   button and the parent controls), so those never land on a bright patch of sky. */
+.vignette {
+  background:
+    linear-gradient(to top, rgba(8, 12, 8, 0.55), transparent 52%),
+    radial-gradient(circle at 4% 0%, rgba(8, 12, 8, 0.42), transparent 22%),
+    radial-gradient(circle at 96% 0%, rgba(8, 12, 8, 0.42), transparent 22%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Nothing is substituted here, unlike everywhere else in the app: the drift is atmosphere,
+     not feedback, so removing it costs no signal. Held at mid-opacity so the motes stay part
+     of the picture instead of vanishing from it. */
+  .mote {
+    animation: none;
+    opacity: 0.42;
+  }
+}

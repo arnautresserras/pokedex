@@ -1,0 +1,67 @@
+.scene {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Landscape: words on the left, the tappable thing on the right, both anchored to the bottom
+   edge. The top of the screen is left to the backdrop and the two corner buttons. */
+.layout {
+  position: relative;
+  box-sizing: border-box;
+  height: 100%;
+  padding: var(--play-gap);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, auto);
+  gap: var(--play-gap);
+  align-items: end;
+}
+
+/* The encounter needs room for full-size hero art, so it takes a real half of the width and
+   the full height of the column — the art rises up into the empty upper area rather than
+   sitting in a strip at the bottom. */
+.layout[data-action='encounter'] {
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+}
+
+.layout[data-action='encounter'] .action {
+  align-self: stretch;
+  /* Clears the parent controls, which are small — this is a third of the home button's inset,
+     not the whole of it. */
+  padding-top: calc(var(--play-target) * 0.55);
+}
+
+/* Portrait: words above, action below, and the top strip reserved for both corner buttons
+   because in one column the panel spans the full width and can't dodge them. */
+@media (orientation: portrait) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    padding-top: calc(var(--play-gap) + var(--play-target));
+    align-items: stretch;
+  }
+
+  .layout[data-action='encounter'] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .layout[data-action='encounter'] .action {
+    padding-top: 0;
+  }
+}
+
+/* Bottom-anchored in landscape and capped by the row, so a long scene scrolls inside the panel
+   rather than growing off the screen. */
+.narration {
+  max-height: 100%;
+}
+
+.action {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}

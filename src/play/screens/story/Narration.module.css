@@ -1,0 +1,53 @@
+/* The scrim. Dark and blurred rather than opaque, so the backdrop stays visible through it —
+   the child is looking at the picture while the parent reads, and cutting a solid rectangle out
+   of the scene would take the picture away for the entire scene. Contrast is not left to the
+   backdrop: this panel is dark enough on its own that near-white text clears WCAG AA over any
+   of the five, including the bright sunlit one. */
+.narration {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: clamp(14px, 3vmin, 34px) clamp(16px, 3.4vmin, 40px);
+  border-radius: var(--play-radius);
+  background: rgba(10, 14, 11, 0.62);
+  -webkit-backdrop-filter: blur(7px) saturate(1.1);
+  backdrop-filter: blur(7px) saturate(1.1);
+  box-shadow: 0 0.8vmin 2.6vmin rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(8px, 1.8vmin, 22px);
+  /* Only ever engages if a scene overruns its character budget on a short viewport — the
+     content files are written to fit. Contained so a stray swipe can't bounce the whole app. */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.line {
+  margin: 0;
+  /* Lora, self-hosted since slice 1. A serif on purpose: this is the one screen in the app
+     that is genuinely *read* rather than recognised, and it's read aloud by an adult. */
+  font-family: var(--font-body);
+  font-weight: 400;
+  /* The teleprompter number. ~30px on a landscape iPad, and it does not shrink below 1.15rem
+     however small the viewport gets — below that the criterion fails and a smaller phone is
+     not a device this app targets. */
+  font-size: clamp(1.15rem, 3.5vmin, 2.4rem);
+  /* Generous leading: a reader glancing down needs to land on a line, not between two. */
+  line-height: 1.5;
+  /* Measure, in characters rather than pixels, so it tracks the font size. ~46ch is the
+     comfortable end of the 45–75 range for a reader who is *performing* rather than skimming. */
+  max-width: 46ch;
+  color: #f8f7f2;
+  text-shadow: 0 0.2vmin 0.8vmin rgba(0, 0, 0, 0.55);
+  /* No hyphenation and no justification: both create the ragged word spacing that makes an
+     adult stumble reading out loud. A ragged right edge is the price and it's the right one. */
+  text-align: left;
+  hyphens: none;
+  text-wrap: pretty;
+}
+
+/* The last block is the hand-over — the question the choices answer, or the colon the
+   Pokémon's name completes. Weighted so the parent can see it coming. */
+.line:last-child {
+  font-weight: 600;
+}

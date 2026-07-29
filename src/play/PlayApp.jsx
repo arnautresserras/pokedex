@@ -4,21 +4,23 @@ import PlayHome from './screens/PlayHome'
 import MotionLab from './screens/MotionLab'
 import ModePlaceholder from './screens/ModePlaceholder'
 import Explore from './screens/explore/Explore'
+import Story from './screens/story/Story'
 import Game from './screens/game/Game'
 import { MODES } from './modes'
 import './play.css'
 
 /**
- * The screen a mode is built out. A mode with no entry here still gets its route, its colour
- * and its shell — `ModePlaceholder` — so slice 5 is one line and a tapped tile never goes
- * nowhere in the meantime.
+ * The screen a mode is built out. All three are built now, so `ModePlaceholder` is unreachable
+ * from `MODES` — it stays as the fallback because that's what made slices 3, 4 and 5 one line
+ * each, and it's what a fourth mode would land on before it has a screen.
  *
- * Every mode screen owns a subtree (`/play/<id>/*`), not a single path: Explore alone is
- * three levels deep, and its inner routing is its own business. Game has no second level and
- * says so by redirecting anything deeper.
+ * Every mode screen owns a subtree (`/play/<id>/*`), not a single path: Explore is three levels
+ * deep and Story is two (a story, then its scenes as state), and their inner routing is their
+ * own business. Game has no second level and says so by redirecting anything deeper.
  */
 const MODE_SCREENS = {
   explore: Explore,
+  story: Story,
   game: Game,
 }
 
@@ -65,7 +67,7 @@ export default function PlayApp() {
         <Route index element={<PlayHome />} />
         {/* One route per mode, derived from the mode list so a mode's id, colour, pictogram
             and URL can't drift apart. A mode graduates out of ModePlaceholder by appearing in
-            MODE_SCREENS — slices 4 and 5 are one entry each. */}
+            MODE_SCREENS — which all three now do. */}
         {MODES.map(mode => {
           const Screen = MODE_SCREENS[mode.id] ?? ModePlaceholder
           return <Route key={mode.id} path={`${mode.id}/*`} element={<Screen mode={mode} />} />

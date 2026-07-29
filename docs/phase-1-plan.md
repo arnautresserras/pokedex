@@ -14,8 +14,8 @@ Revised against the silent / parent-narrated / Catalan spec revision.
 | 2 · Home / mode switcher | **Done.** Built, deployed to Pages, reviewed on device. Five decisions recorded under the slice. |
 | 3 · Explore | **Built.** All three levels land; logic verified against the cache. Awaiting the device pass. Six decisions recorded under the slice. |
 | 4 · Game | **Built.** Rounds and both phases verified against the cache. Awaiting the device pass — which is also the answer to Slice 0's open question. Six decisions recorded under the slice. |
-| 5 · Story engine + forest story | Unblocked, and now the only Phase 1 feature slice left. Taken *after* 6 — see the note under that slice. |
-| 6 · PWA + device hardening | **Built.** Manifest, icons and service worker land; precache verified against the build. Awaiting the device pass, which is the install itself. Five decisions recorded under the slice. |
+| 5 · Story engine + forest story | **Built.** Graph, pools, prose and every scene verified against the cache. Awaiting the device pass, which is also where its acceptance criterion (readable at arm's length) gets measured. Seven decisions recorded under the slice. |
+| 6 · PWA + device hardening | **Done.** Built, deployed, installed to the iPad's home screen and verified offline in airplane mode. Five decisions recorded under the slice. |
 
 Nothing about the plan below has changed shape as a result of Slices 1–2 — the risks they name
 are still the risks.
@@ -376,7 +376,7 @@ recorded here instead.
 the spike was built for, and Game mode is where it gets its real test. If the verdict is lukewarm,
 the fix is `SilhouetteStage` and `Celebrate` — not the round logic, and not the layout.
 
-## Slice 5 — Story engine + forest story (≈2–2.5 days)
+## Slice 5 — Story engine + forest story (≈2–2.5 days) — **built, device pass pending**
 
 **Engine** — content is data, not components:
 
@@ -411,7 +411,131 @@ parent, who uses these mid-narration. No confirmation dialogs.
 **Acceptance:** playable start to finish by the child tapping picture choices only, parent
 narrating, text comfortably readable at arm's length.
 
-## Slice 6 — PWA + device hardening (≈1 day) — **built, device pass pending**
+**What landed.** `src/play/stories/` (`forest.js`, `forest.ca.js`, `index.js`),
+`src/play/utils/encounters.js`, and `screens/story/` — `Story` (frame, routing and the scene
+state machine), `StoryScene` (the shared frame: backdrop, narration panel, action slot),
+`Narration` (the teleprompter), `SceneChoices`, `ChoiceGlyph` (four pictograms), `Encounter`,
+`Backdrop` (five backdrops from three shapes) and `ParentControls`. One `MODE_SCREENS` entry,
+exactly as slices 3 and 4 left it — the third and last, so `ModePlaceholder` is now unreachable
+from `MODES`. It stays as the fallback: it's what made these three slices one line each and
+what a fourth mode would land on.
+
+**Seven decisions worth keeping:**
+
+1. **The graph and the words are separate files, and that's what makes P2 cheap.** The plan said
+   "keep narration in its own field so a `ca` / `es` / `en` sibling is a copy-paste later". A
+   sibling copy of the *whole* story would also copy the branching, which is the one part a
+   translator must not be able to fork — a Spanish `next` pointing at a scene the Catalan version
+   renamed is a dead end that only shows up in Spanish. So `forest.js` is the shape (scenes,
+   choices, backdrops, pool) and `forest.ca.js` is the prose; `index.js` joins them. A second
+   language is one file with no ids to get wrong in it, and `verify` reports any scene the text
+   file forgot.
+2. **A story is a route, a scene is state.** Explore's levels are routes because a card is worth
+   linking to and Game's round is state because a random round isn't; a scene is the second case
+   for a subtler reason — the *path taken* is what gives a scene its meaning, so a link into scene
+   four arrives having skipped the choice that led there. It's also what makes the parent's back
+   button honest: it holds the visited path as an array, so "back" means the previous *scene*
+   rather than the previous URL, and restart empties it instead of unwinding history. `/play/story`
+   redirects into the only story rather than showing a picker holding one tile.
+3. **The narration panel is along the bottom, and it's the layout, not a font size.** The two top
+   corners belong to the home button and the parent controls, so a panel up there either collides
+   with them or pushes itself into the middle of the picture — and an adult holding an iPad reads
+   from the lower half, where their thumbs already are. That leaves the upper two thirds to the
+   backdrop, so what the child is looking at is the biggest thing on screen while the parent talks
+   over it. The teleprompter numbers themselves: Lora at `clamp(1.15rem, 3.5vmin, 2.4rem)` (~30px
+   on a landscape iPad, and it never shrinks below 1.15rem), line-height 1.5, a **46ch** measure,
+   no hyphenation and no justification — both produce the ragged word spacing that makes an adult
+   stumble reading out loud. One paragraph per array entry, never a joined blob, so a reader
+   glancing down finds their place by block.
+4. **The prose has a character budget, because the panel can't scroll mid-sentence.** ~340
+   characters in at most three blocks per narrated scene, ~200 for an encounter. That's a
+   *content* constraint derived from the layout, so it's checked rather than trusted: a scene that
+   overruns would either shrink the type below the acceptance criterion or scroll, and a
+   teleprompter that scrolls is worse than a short story. Both encounter scenes end on a **colon**
+   — the Pokémon's name is rendered beside the art and completes the sentence, so the reveal is
+   *performed* by the parent rather than merely displayed, at the cost of one punctuation mark.
+5. **Five scenes, two branch points, and the first branch reconverges.** `edge` forks into a
+   sunlit path and a dark thicket; both offer the same second choice (look **up** at the branches,
+   or **under** the leaves) and both endings are reachable from both. Four separate endings would
+   have been four half-written ones, and the reconvergence is what buys the prose its quality.
+   The choices are sun-versus-shade and up-versus-down rather than left-versus-right on purpose:
+   arrows are a convention a 4-year-old has to be taught, and those two are things they can see.
+   That's a constraint on the authoring as much as on the drawing.
+6. **The encounter pool is a place, not a cast.** `CATCH_LOCATIONS` inverted (id → routes becomes
+   route → ids, the constraint this plan flagged at the start) plus one story-place mapping,
+   `forest → Viridian Forest + Route 2`, which resolves to seven residents: Caterpie, Metapod,
+   Weedle, Kakuna, Pidgey, Rattata, Pikachu. Both endings draw from the same pool, deliberately —
+   splitting it into canopy-dwellers and ground-dwellers would mean inventing habitat data the
+   cache doesn't have, and the difference between the two endings is already the prose, the
+   backdrop and where the child was looking. A cave story gets its cast for free.
+7. **The encounter's own affordance is "meet another", not "the end".** Tapping the Pokémon (or
+   the arrow in the same corner Game's "next" uses) rolls another resident of the same place, with
+   the last three barred from recurring — a pool of seven repeats constantly, and meeting the same
+   Caterpie twice running reads as the story being broken rather than as the forest being small.
+   Restarting is deliberately *not* here: it's the parent's control, because choosing to hear the
+   story again is a parent's decision, while "who else lives under there?" is the child's loop and
+   should cost one tap. The tap-the-art grammar is lifted from Game's reveal on purpose.
+
+**Backdrops: three shapes serve five scenes.** Layered flat silhouettes in CSS gradients and
+inline SVG, as planned — no image pipeline, no licensing question. The shapes are the treeline
+seen from the path, the canopy seen from *below* (the "shake the branch" ending) and leaf litter
+seen from *above* (the "look underneath" one), because the two endings differ by where the child
+is looking and a backdrop that ignored that would flatten the only real difference between them.
+Palette and a sun make the same treeline dawn, midday or gloom. Every position is a literal in a
+table: a backdrop that reshuffled its trees on re-render would turn the parent's "back one scene"
+into a different forest. The one continuously animated thing in the app lives here — a few
+drifting motes, slow and small enough to be ignorable, and the only animation whose
+reduced-motion path *removes* rather than substitutes, because it's atmosphere and not feedback.
+
+**Parent controls are small, and the size is the whole access control.** Back-one-scene and
+restart, in `ModeScreen`'s `controls` slot at roughly a third of the area of every other button
+in the app, via the `--tap-min` override that exists for exactly this. No confirmation dialog and
+no long-press gate: they're used mid-narration by an adult already holding the device, so anything
+slower is friction paid on every use to prevent a problem whose worst case is "the story jumped a
+scene". Back stays mounted and merely disabled on the first scene — hiding it would shift restart
+sideways between scenes, and a control that moves is one a parent has to look at instead of reach
+for while reading.
+
+**`verify` gained the story checks it was written for**, plus two the original list didn't have:
+every encounter pool must resolve to somebody (a typo in a route name would otherwise end the
+story on an empty stage — the same "dead end mid-narration" failure, one layer further in), and no
+scene may be unreachable (authored prose nobody will ever hear). Narration is now required on
+*every* scene including encounters, since the mode is parent-narrated and an encounter without
+words leaves the reveal without its sentence. This is also why `src/play/stories/` and
+`utils/encounters.js` carry explicit `.js` import extensions and hold data only: `verify` imports
+them under plain Node, which is exactly what Slice 4's round invariants couldn't manage. Content
+is the case where it's worth it — authored prose breaks silently in a way pure logic doesn't.
+
+**Verified against the cache, not just the build**: the graph walked (5 scenes, all reachable, no
+cycles, every path terminating in an encounter, both endings reachable from both first-branch
+paths); every scene inside its character budget with both encounters handing over on a colon;
+four pictograms, each with a Catalan label and none spare; the forest pool resolving to exactly
+the seven Gen I residents in dex order, and an unknown pool key resolving to nobody rather than
+to a random Pokémon; 20,000 encounters drawing all seven with no repeat inside the 3-deep window
+and an even spread (2805–2908 each); then every scene server-rendered — the three narrated ones
+with their choices and labels, both encounters against all seven residents, each showing its own
+name and its own art, all five backdrops, and the mode frame with both corners in place. A
+missing pictogram renders a magenta placeholder rather than a blank tile, so the one story failure
+`verify` can't reach (the icons are JSX; the check runs under Node) can't be silent either.
+
+**Not covered, and deliberately**: the scene state machine's own transitions — choose, back,
+restart, meet-another. Driving them needs a DOM, which means a test runner this phase doesn't
+warrant; the pieces they move are each rendered above, and four taps is precisely what the device
+pass exercises first.
+
+**Still unanswered, and it's the acceptance criterion**: whether the narration is comfortably
+readable at arm's length with a child on the lap, which is a measurement on a real iPad at a real
+distance and the thing this slice is most likely to need a second pass on. The plan said so up
+front. Two smaller ones fold into the same sitting: whether the four choice pictograms read as
+places (same class of question as the mode and type glyphs), and whether a 4-year-old discovers
+that tapping the Pokémon meets another one — the arrow is there for the child who doesn't.
+
+## Slice 6 — PWA + device hardening (≈1 day) — **done**
+
+Commit `7da7bac`. Deployed, added to the iPad's home screen, and confirmed working in airplane
+mode — which is the first time any part of Phase 1 has been verified as an *installed app* rather
+than as a web page. The whole offline chain held on the first try: no missing precache pattern, no
+scope mismatch, no font falling back.
 
 **Taken before Slice 5**, against the sequencing note's own suggestion. The reasoning: every open
 question left by slices 0, 2, 3 and 4 ends in "needs the daughters", and this slice's last step is
@@ -487,10 +611,15 @@ behind the unsent message. `npm run preview` serves the manifest as `application
 every PWA path 200s. `npm run dev` injects neither the manifest link nor the registration, so no
 stale worker can ever confuse a dev session.
 
-**Not done here, and it can't be**: the device pass itself — Add to Home Screen, launch with no
-Safari chrome, both orientations, airplane mode, fonts arriving offline. That's the whole point of
-taking this slice now, and it's the step that also finally asks slices 0/2/3/4's open questions of
-the actual users.
+**Device pass: passed.** Installed from Safari, launches standalone, and works in airplane mode.
+The slice's own acceptance criteria are met.
+
+**What that unblocks rather than answers.** Taking this slice early was justified on the grounds
+that it puts the real artefact in the daughters' hands — and it now has, but the four questions
+slices 0, 2, 3 and 4 left open are about what a *child* makes of the app, not about whether it
+installs. They stay open until the girls have actually used it. What's changed is that they can now
+be asked properly: chrome-less, offline, on the home screen, in the state the app will always be in.
+The device passes still formally pending for slices 3 and 4 fold into that same sitting.
 
 ---
 
@@ -502,8 +631,10 @@ experience silently for a pre-reader who can't report a bug, so they get one che
 
 - every id 1–151 has both a vendored art and sprite file *(live; also checks that every face in
   `fonts.css` exists and that the Google Fonts links haven't crept back into `index.html`)*;
-- every story scene's `next` resolves to a real scene, every branch terminates, no narration field
-  is empty *(written, inert until the story engine lands in Slice 5)*;
+- every story scene's `next` resolves to a real scene, every branch terminates in an encounter, no
+  narration field is empty, every choice has a pictogram *and* a label, no scene is unreachable,
+  and every encounter pool resolves to at least one Pokémon *(live since Slice 5 — the last three
+  were added there; see the slice for why the story modules are plain-Node-importable)*;
 - **nothing under `src/play/` references `speechSynthesis`, `AudioContext`, `new Audio`, or
   `navigator.vibrate`** *(live; `SpeechSynthesisUtterance`, `webkitAudioContext` and `<audio>` are in
   the list too)*. "Silent by design" is a constraint that's easy to violate months later without
@@ -529,7 +660,14 @@ complete.
 
 **6 was taken first**, on that argument plus a stronger one: it's the slice that ends in handing the
 app to the daughters, and four earlier slices are each waiting on exactly that. Reasoning recorded
-under Slice 6. Slice 5 is next and is all that's left of Phase 1.
+under Slice 6.
+
+**5 landed last, and with it every P0 feature is built.** What remains of Phase 1 is not
+construction: it's one sitting with the actual users, on the installed app, which closes out the
+device passes formally pending for slices 3, 4 and 5 and answers the questions those slices could
+only record. Slice 5 added nothing to the precache — backdrops are gradients and inline SVG and
+Lora already shipped — so the installed app picks it up on its next cold launch, exactly as Slice
+6's update policy intends.
 
 Rough total: **8–10 working days**. Cutting audio didn't buy time; it moved it into motion design,
 self-hosted typography, and Catalan authoring.
@@ -548,5 +686,11 @@ self-hosted typography, and Catalan authoring.
 - Does a child scroll a big type room unprompted? → the Verí room (33 members) is the only scrolling
   surface in the app. If not, the fallback is paging rather than scrolling, which is a change to one
   component.
+- Is the narration comfortably readable at arm's length? → the one P0 criterion that's a measurement
+  rather than a judgement, and the most likely thing in Slice 5 to need a second pass. The numbers
+  are all in `Narration.module.css` and none of them is load-bearing for anything else, so tuning
+  them is a one-file change.
+- Do the four choice pictograms read as places? → same class as the mode and type glyphs, and the
+  labels underneath mean a parent can always bridge the gap out loud.
 - Per-child profiles → only matters once favorites exist (P1).
 - Whether to retire the print book → no action; it keeps working.

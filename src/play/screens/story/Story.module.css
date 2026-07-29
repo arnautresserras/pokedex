@@ -1,0 +1,5 @@
+/* The scene fills the mode's body; everything else about its layout is `StoryScene`'s. */
+.stage {
+  height: 100%;
+  width: 100%;
+}
