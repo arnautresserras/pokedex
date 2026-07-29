@@ -5,10 +5,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev          # start Vite dev server (http://localhost:5173/pokedex/)
-npm run build        # production build → dist/
-npm run preview      # preview the production build locally
-npm run verify       # scripts/verify-play.js — vendored assets, fonts, "silent by design", stories
+npm run dev          # start Vite dev server (http://localhost:5173/pokedex/) — no service worker
+npm run build        # production build → dist/, plus manifest.webmanifest + sw.js
+npm run preview      # preview the production build locally — the only local way to get the SW
+npm run verify       # scripts/verify-play.js — assets, fonts, icons, "silent by design", stories
 ```
 
 Asset pipeline (committed output; re-run only if `public/pkmn/` or `public/fonts/` is missing):
@@ -17,6 +17,7 @@ Asset pipeline (committed output; re-run only if `public/pkmn/` or `public/fonts
 node scripts/fetch-play-assets.js     # 151 hero art → WebP 512px + front sprites → public/pkmn/
 node scripts/fetch-fonts.js           # the three typefaces → public/fonts/ + generates src/fonts.css
 node scripts/fetch-type-icons.js      # the 15 type pictograms → generates src/play/typeIcons.js
+node scripts/make-icons.js            # home-screen / manifest icons from pokeball.svg → public/icons/
 ```
 
 Data pipeline (only needed if `src/data/pokemon-cache.json` is missing or must be regenerated —
@@ -32,8 +33,9 @@ No test runner is configured; `npm run verify` covers the failure classes that w
 app silently. Validate print layout changes visually in the browser and via print preview
 (Ctrl+P → Save as PDF). Every change to a page component needs a print-preview check — overflow is
 invisible on screen because pages use `overflow: hidden`. Validate play changes on the iPad; the PWA
-half can only be checked against the deployed HTTPS URL (a service worker won't register on a LAN
-dev server).
+half can only be checked against the deployed HTTPS URL or `npm run preview` (a service worker
+won't register on a LAN dev server — it needs a secure context, and `npm run dev` registers none
+at all by design, so a stale SW can never confuse a dev session).
 
 ## Architecture
 
@@ -61,6 +63,36 @@ render correctly offline, and `verify` fails if they come back.
 `vite.config.js` sets `base: '/pokedex/'` for GitHub Pages. It must match the repo name exactly and
 Pages paths are case-sensitive (the remote is `arnautresserras/pokedex`, lowercase). Reference
 vendored files through `import.meta.env.BASE_URL`, never a bare `/`-rooted path in JS.
+
+### PWA / offline
+
+`vite-plugin-pwa` (Workbox `generateSW`) is configured in [vite.config.js](vite.config.js) and emits
+`manifest.webmanifest` + `sw.js` at build time. Four things about it are load-bearing:
+
+- **`base` is the single source of truth.** `scope`, `start_url` and every manifest icon `src` are
+  built from the same `BASE` constant, so the casing mistake that cost Slice 1 a deploy can't
+  recur — a wrong `scope` means a home-screen launch that opens in Safari with chrome, which looks
+  like a broken install rather than a config typo. Never restate the path literally.
+- **`globPatterns` must keep `webp` and `woff2`.** Workbox's default pattern omits both, and both
+  are the entire app: 151 hero arts and the three self-hosted typefaces. The precache is ~350
+  entries / ~4MB, comfortably under `maximumFileSizeToCacheInBytes` (largest single file is the
+  437KB main bundle), so that limit is deliberately left at its default.
+- **There is no `runtimeCaching`, and shouldn't be.** Everything the play app touches is vendored
+  and precached, so a runtime cache could only ever catch a remote request — which in play code is
+  the bug the vendoring rule exists to prevent, and in the print book is 151 remote hero arts that
+  deliberately stay out of a child's offline cache.
+- **`registerType: 'prompt'` with no prompt UI is intentional.** `autoUpdate` reloads the page the
+  instant a new SW takes over, and a reload mid-round reads as a crash to a four-year-old — who
+  also can't be shown an "update available" button in an app with no readable text. So
+  `skipWaiting` stays off: a new version installs quietly and activates on the next cold launch.
+  `clientsClaim: true` is still set, so the *first* load is controlled without needing a refresh.
+
+Icons are generated output like everything else in `public/` — `scripts/make-icons.js` renders four
+PNGs from `public/pokeball.svg` into `public/icons/`, committed. They're flattened onto `--play-bg`
+because a transparent icon composites onto black on iOS, and there are two 512s because a maskable
+icon needs a smaller ball to survive Android's crop. **iOS reads the `apple-touch-icon` link in
+[index.html](index.html), not the manifest**, so that line and the manifest's `icons` array both
+have to be right; `verify` checks the files exist and that the link is present.
 
 ### Data flow
 

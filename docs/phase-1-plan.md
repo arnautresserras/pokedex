@@ -14,8 +14,8 @@ Revised against the silent / parent-narrated / Catalan spec revision.
 | 2 · Home / mode switcher | **Done.** Built, deployed to Pages, reviewed on device. Five decisions recorded under the slice. |
 | 3 · Explore | **Built.** All three levels land; logic verified against the cache. Awaiting the device pass. Six decisions recorded under the slice. |
 | 4 · Game | **Built.** Rounds and both phases verified against the cache. Awaiting the device pass — which is also the answer to Slice 0's open question. Six decisions recorded under the slice. |
-| 5 · Story engine + forest story | Unblocked, and now the only Phase 1 feature slice left. |
-| 6 · PWA + device hardening | Not started. Its deploy half was pulled forward into Slice 1. |
+| 5 · Story engine + forest story | Unblocked, and now the only Phase 1 feature slice left. Taken *after* 6 — see the note under that slice. |
+| 6 · PWA + device hardening | **Built.** Manifest, icons and service worker land; precache verified against the build. Awaiting the device pass, which is the install itself. Five decisions recorded under the slice. |
 
 Nothing about the plan below has changed shape as a result of Slices 1–2 — the risks they name
 are still the risks.
@@ -411,7 +411,16 @@ parent, who uses these mid-narration. No confirmation dialogs.
 **Acceptance:** playable start to finish by the child tapping picture choices only, parent
 narrating, text comfortably readable at arm's length.
 
-## Slice 6 — PWA + device hardening (≈1 day)
+## Slice 6 — PWA + device hardening (≈1 day) — **built, device pass pending**
+
+**Taken before Slice 5**, against the sequencing note's own suggestion. The reasoning: every open
+question left by slices 0, 2, 3 and 4 ends in "needs the daughters", and this slice's last step is
+handing them the app — so it's the one that unblocks four pending answers rather than adding a fifth
+feature. It also front-loads the slice with the slow feedback loop (manifest and standalone
+behaviour only verify on a deployed HTTPS build), and Slice 5 adds no new precached assets —
+backdrops are gradients and inline SVG, Lora already ships — so nothing here gets invalidated by
+taking Story second. The cost is that the installed app has one dead tile until 5 lands; accepted
+rather than papered over, since a parent is present.
 
 - `vite-plugin-pwa` (Workbox): `start_url: '/pokedex/#/play'`, `scope: '/pokedex/'`,
   `display: standalone`; precache build output including `public/pkmn/` and `public/fonts/`. The
@@ -428,11 +437,66 @@ narrating, text comfortably readable at arm's length.
 - README note on **Guided Access** — the real answer to "child taps out of the app," and a parent
   setup step rather than code.
 
+**What landed.** `vite-plugin-pwa` wired into `vite.config.js`, `scripts/make-icons.js` →
+`public/icons/` (four PNGs, 33KB, committed), an `apple-touch-icon` link and a corrected
+`theme-color` in `index.html`, a fourth check in `verify-play.js`, and a `README.md` — the repo
+didn't have one, and the Guided Access note needed somewhere a parent would actually look.
+
+**Five decisions worth keeping:**
+
+1. **Updates wait for a cold launch — `registerType: 'prompt'` with no prompt.** `autoUpdate`
+   reloads the page the moment a new service worker takes over, and a mid-round reload doesn't read
+   as an update to a 4-year-old, it reads as the app breaking. The usual alternative is an "update
+   available" button, which is unavailable on principle: this app has no readable text. So
+   `skipWaiting` stays off and a new version activates the next time the app is opened cold — which
+   for a home-screen app is exactly the natural moment. `clientsClaim: true` is still set, so the
+   *first* visit is controlled immediately and "open the page, add to home screen, go offline" works
+   without a refresh nobody would think to do. The only `skipWaiting()` in the emitted worker sits
+   behind a `SKIP_WAITING` message that nothing sends — verified in `dist/sw.js`, because this is
+   the kind of default that's easy to inherit by accident.
+2. **`base` is the single source of truth for the manifest.** `scope`, `start_url` and all three
+   icon `src`s are built from one `BASE` constant. Slice 1's deviation 1 was a casing mistake in
+   exactly this value, and its failure mode here is worse than a 404: a wrong `scope` gives a
+   home-screen launch that opens *in Safari with chrome*, which looks like a broken install rather
+   than a config typo. Construction rather than a verify check, because a `verify` assertion would
+   have to re-parse the config to know what it should say.
+3. **No `runtimeCaching`, deliberately.** Every play asset is vendored and precached, so a runtime
+   cache could only ever catch a *remote* request — and in play code a remote request is the bug the
+   vendoring rule exists to prevent. The print book's 151 remote hero arts are the other side of it:
+   they'd quietly fill a child's offline cache with the one part of the app that isn't for her. The
+   absence is the design, so it's commented in place.
+4. **Icons are flattened, and there are two 512s.** `pokeball.svg` is a circle in a square box, so
+   its corners are transparent — and iOS composites a transparent icon onto black, which erases the
+   ball's own `#16161a` outline and makes it look bitten. Every icon is therefore flattened onto
+   `--play-bg`, the same colour as `background_color` and the corrected `theme-color`, so the tile,
+   the launch screen and the app's first painted pixel are one continuous dark instead of three
+   different ones. The second 512 is the maskable variant: Android keeps only the central 80%, so it
+   draws the ball at 60% rather than 82%. Not a `purpose` flag on the same file — a different crop.
+5. **`verify` gained a fourth failure class: the missing icon.** `public/icons/` is generated output
+   exactly like `public/pkmn/`, and it fails the same silent way — the build succeeds, the manifest
+   points at a 404, and iOS falls back to a screenshot of a dark screen. The `apple-touch-icon`
+   `<link>` gets its own assertion, because iOS ignores the manifest's `icons` array entirely: losing
+   that one line breaks the tile while leaving the manifest looking perfectly correct.
+
+**Verified against the build, not just the config**: 350 precache entries / 4.05MB — 302 `pkmn`
+images, 16 fonts, 4 icons, 24 JS/CSS chunks, plus `index.html`, `registerSW.js`, `pokeball.svg` and
+the manifest. Precache URLs are worker-relative rather than root-relative, so the `/pokedex/` base
+resolves through the worker's own scope and can't drift from `base`. `navigateFallback` is
+`index.html` (offline `/pokedex/` still boots). `clientsClaim()` present, `skipWaiting()` only
+behind the unsent message. `npm run preview` serves the manifest as `application/manifest+json` and
+every PWA path 200s. `npm run dev` injects neither the manifest link nor the registration, so no
+stale worker can ever confuse a dev session.
+
+**Not done here, and it can't be**: the device pass itself — Add to Home Screen, launch with no
+Safari chrome, both orientations, airplane mode, fonts arriving offline. That's the whole point of
+taking this slice now, and it's the step that also finally asks slices 0/2/3/4's open questions of
+the actual users.
+
 ---
 
 ## Verification
 
-No test runner, and Phase 1 doesn't warrant adding one. Three failure classes would break the
+No test runner, and Phase 1 doesn't warrant adding one. Four failure classes would break the
 experience silently for a pre-reader who can't report a bug, so they get one cheap script —
 `scripts/verify-play.js`, wired to `npm run verify` and run in CI before every build:
 
@@ -443,7 +507,10 @@ experience silently for a pre-reader who can't report a bug, so they get one che
 - **nothing under `src/play/` references `speechSynthesis`, `AudioContext`, `new Audio`, or
   `navigator.vibrate`** *(live; `SpeechSynthesisUtterance`, `webkitAudioContext` and `<audio>` are in
   the list too)*. "Silent by design" is a constraint that's easy to violate months later without
-  noticing, and it's a two-line assertion.
+  noticing, and it's a two-line assertion;
+- all four `public/icons/` files exist and `index.html` still carries its `apple-touch-icon` link
+  *(live, added in Slice 6)*. Same class as the first check — generated output that goes missing
+  without failing the build, leaving iOS to use a screenshot of a dark screen as the app's icon.
 
 Everything else is a real-device check on the deployed URL at the end of each slice.
 
@@ -459,6 +526,10 @@ placeholder shell; PWA hardening is already worth doing, because Explore and Gam
 enough to install. Story is the bigger of the two and the one with authoring in it, so taking 6
 first is a defensible way to get something on the home screen sooner — but 5 is what makes Phase 1
 complete.
+
+**6 was taken first**, on that argument plus a stronger one: it's the slice that ends in handing the
+app to the daughters, and four earlier slices are each waiting on exactly that. Reasoning recorded
+under Slice 6. Slice 5 is next and is all that's left of Phase 1.
 
 Rough total: **8–10 working days**. Cutting audio didn't buy time; it moved it into motion design,
 self-hosted typography, and Catalan authoring.

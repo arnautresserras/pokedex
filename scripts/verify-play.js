@@ -6,6 +6,7 @@
  *   1. a missing vendored image  → a blank cell the child just taps again
  *   2. a broken story link       → a dead end mid-narration (added with the story engine)
  *   3. an audio API creeping in  → "silent by design" quietly violated months later
+ *   4. a missing home-screen icon → the installed tile becomes a screenshot of a dark screen
  *
  * Usage: node scripts/verify-play.js
  */
@@ -44,6 +45,31 @@ async function checkFonts() {
   const indexHtml = await readFile(path.join(ROOT, 'index.html'), 'utf8')
   if (indexHtml.includes('fonts.googleapis.com') || indexHtml.includes('fonts.gstatic.com')) {
     fail('index.html still loads fonts from the Google Fonts CDN — the app must work offline')
+  }
+}
+
+/**
+ * The installed app's identity. `public/icons/` is generated output like `public/pkmn/`, so it
+ * can go missing the same way — and when it does the build still succeeds: the manifest points at
+ * a 404 and iOS falls back to a screenshot of whatever page was open. The apple-touch-icon link
+ * gets its own check because iOS ignores the manifest's icons entirely, so losing that one line
+ * breaks the tile while leaving the manifest looking perfectly correct.
+ */
+const ICONS = ['apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'maskable-512.png']
+
+async function checkIcons() {
+  for (const file of ICONS) {
+    if (!(await exists(path.join(ROOT, 'public', 'icons', file)))) {
+      fail(`missing public/icons/${file} — run node scripts/make-icons.js`)
+    }
+  }
+
+  const indexHtml = await readFile(path.join(ROOT, 'index.html'), 'utf8')
+  const href = indexHtml.match(/rel="apple-touch-icon"[^>]*href="([^"]+)"/)?.[1]
+  if (!href) {
+    fail('index.html has no apple-touch-icon link — iOS would use a screenshot as the home-screen icon')
+  } else if (!(await exists(path.join(ROOT, 'public', href.replace(/^\//, ''))))) {
+    fail(`index.html's apple-touch-icon points at a missing file: ${href}`)
   }
 }
 
@@ -111,6 +137,7 @@ async function checkStories() {
 
 await checkAssets()
 await checkFonts()
+await checkIcons()
 await checkSilence()
 await checkStories()
 
@@ -119,4 +146,4 @@ if (failures.length) {
   for (const f of failures) console.error(`  ✗ ${f}`)
   process.exit(1)
 }
-console.log('verify-play: assets, fonts, silence and stories all check out')
+console.log('verify-play: assets, fonts, icons, silence and stories all check out')
