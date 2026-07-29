@@ -1,0 +1,27 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.34em 0.9em 0.34em 0.55em;
+  border-radius: 999px;
+  background: var(--badge-primary);
+  box-shadow: inset 0 0 0 0.35vmin var(--badge-accent);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(0.95rem, 2.8vmin, 1.7rem);
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.glyphBox {
+  width: 1.5em;
+  height: 1.5em;
+  flex: 0 0 auto;
+}
+
+.label {
+  /* Optical centring: uppercase Barlow sits high in its box next to a centred glyph. */
+  padding-top: 0.08em;
+}

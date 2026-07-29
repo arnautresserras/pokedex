@@ -1,0 +1,8 @@
+/* Fills whatever box it's given and letterboxes inside it (the viewBox is square, so the
+   default xMidYMid meet does the centring). Consumers size the *wrapper*, never this — one
+   class setting one property means no stylesheet-order fights over who wins. */
+.glyph {
+  width: 100%;
+  height: 100%;
+  display: block;
+}

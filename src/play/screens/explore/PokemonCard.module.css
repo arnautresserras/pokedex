@@ -1,0 +1,113 @@
+/* Landscape: art beside the facts. Portrait: art above them. Both keep the art the largest
+   thing on screen, because it's the only part of the card a pre-reader can use. */
+.card {
+  box-sizing: border-box;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1.08fr 1fr;
+  background: linear-gradient(165deg, var(--color-accent), var(--play-bg) 76%);
+}
+
+@media (orientation: portrait) {
+  .card {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1.15fr 1fr;
+  }
+}
+
+.art {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  /* Clears the home button's corner without pushing the art off-centre on the other side. */
+  padding: calc(var(--play-gap) + var(--play-target) * 0.35) var(--play-gap) var(--play-gap);
+}
+
+/* A glow in the Pokémon's own colour, behind the art. This is what makes the screen change
+   colour when the child evolves something — the single loudest signal on the card. */
+.art::before {
+  content: '';
+  position: absolute;
+  inset: 6%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--color-primary), transparent 68%);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* Fills the art area so the celebration rings have the whole panel to expand across. */
+.celebrate {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Sized absolutely rather than as a percentage: `Celebrate` centres its child at the child's
+   own size, so a percentage here would resolve against the 512px source and overflow. Same
+   reason the motion lab sizes its celebrate target in vmin. */
+.hero {
+  width: clamp(140px, 52vmin, 560px);
+  height: clamp(140px, 52vmin, 560px);
+  object-fit: contain;
+  filter: drop-shadow(0 1.4vmin 3vmin rgba(0, 0, 0, 0.5));
+}
+
+.info {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  /* Right padding clears the back button, which sits in this column's corner. */
+  padding: calc(var(--play-gap) + var(--play-target) * 0.9) var(--play-gap) var(--play-gap)
+    0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(8px, 2vmin, 22px);
+  /* Never expected to engage at iPad sizes — a safety net so a short viewport clips nothing. */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (orientation: portrait) {
+  .info {
+    padding: 0 var(--play-gap) var(--play-gap);
+    justify-content: flex-start;
+  }
+}
+
+/* Text only, never spoken, and sized for the parent to read across the room. */
+.name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(1.8rem, 7vmin, 4.5rem);
+  line-height: 0.95;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--play-ink);
+  text-shadow: 0 0.3vmin 1.4vmin rgba(0, 0, 0, 0.5);
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(5px, 1.2vmin, 12px);
+}
+
+.traits {
+  margin-top: clamp(2px, 0.8vmin, 8px);
+}
+
+.evolution {
+  margin-top: auto;
+  justify-content: flex-start;
+}
+
+@media (orientation: portrait) {
+  .evolution {
+    margin-top: clamp(6px, 1.6vmin, 16px);
+    justify-content: center;
+  }
+}

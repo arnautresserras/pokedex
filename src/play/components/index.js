@@ -1,3 +1,6 @@
 export { default as ModeScreen } from './ModeScreen'
 export { default as ModeGlyph } from './ModeGlyph'
 export { default as HomeButton } from './HomeButton'
+export { default as BackButton } from './BackButton'
+export { default as TypeGlyph } from './TypeGlyph'
+export { default as PlayTypeBadge } from './PlayTypeBadge'

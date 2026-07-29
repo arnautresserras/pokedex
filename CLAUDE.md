@@ -88,12 +88,15 @@ imports them; don't add to them and don't treat them as a source of truth.
 Hash routing is deliberate: GitHub Pages has no SPA rewrite, and this needs no 404.html trick.
 
 ```
-/              → redirect to /play
-/play          → play app home — the three-tile mode switcher
-/play/explore  → Explore (type rooms) — placeholder shell until Slice 3
-/play/story    → Story — placeholder shell until Slice 5
-/play/game     → Game ("Who's that Pokémon?") — placeholder shell until Slice 4
-/play/motion   → motion lab — the shared feedback primitives, for on-device checks
+/                            → redirect to /play
+/play                        → play app home — the three-tile mode switcher
+/play/explore                → Explore — the 15 type rooms
+/play/explore/:type          → that type's grid
+/play/explore/:type/:id      → one Pokémon's card (`:type` is the room you came from,
+                               which is not always the Pokémon's own type)
+/play/story                  → Story — placeholder shell until Slice 5
+/play/game                   → Game ("Who's that Pokémon?") — placeholder shell until Slice 4
+/play/motion                 → motion lab — the shared feedback primitives, for on-device checks
 /browse        → the whole book, stacked (full print run)
 /pokemon/:id   → single Pokémon page (design/iterate on one card)
 /page/:slug    → single book page — half-title, full-title, copyright, foreword,
@@ -149,19 +152,28 @@ Each page is its own component + co-located CSS Module, both declaring the `210m
 ### Play app (`src/play/`)
 
 ```
-PlayApp.jsx          shell for /play/*; sets html[data-mode='play'] and blocks pinch/double-tap zoom
+PlayApp.jsx          shell for /play/*; sets html[data-mode='play'] and blocks pinch/double-tap
+                     zoom. MODE_SCREENS maps a mode id → its screen; a mode with no entry gets
+                     ModePlaceholder. Every mode owns a subtree (/play/<id>/*), not one path.
 play.css             global touch hardening + design tokens (scoped to html[data-mode='play'],
                      so App.css's #root print layout is left alone)
 modes.js             the three modes as data — id, Catalan label, colour triple; MODES drives
                      the home tiles AND PlayApp's routes (mode id === path segment)
+typeRooms.js         the 15 type rooms as data — Catalan label, representative `face` id, and
+                     type → members (memoized). modes.js's sibling, one level down.
 motion/              the shared feedback layer — Tappable, Celebrate, SceneTransition,
                      useReducedMotion
-components/          ModeScreen (the shell every mode renders inside), HomeButton, ModeGlyph
+components/          ModeScreen (the shell every mode renders inside), HomeButton, BackButton,
+                     ModeGlyph, TypeGlyph (15 type pictograms), PlayTypeBadge
 utils/playColors.js  type colours with the cache's post-Gen-I types resolved
 utils/playAssets.js  artUrl(id) / spriteUrl(id) → vendored files under public/pkmn/
+utils/traits.js      height / weight / speed as 1-of-5 levels, ranked across all 151
+utils/evolution.js   a chain reduced to drawable stages — Gen I filter + Eevee's branch shape
 utils/onPokemonTap.js  the single "a Pokémon was tapped" call site, used by all three modes
 screens/             PlayHome (the mode switcher), ModePlaceholder (stands in for a mode that
                      isn't built yet), MotionLab
+screens/explore/     Explore (owns the frame and the sub-routing), TypeRoomIndex, TypeRoom,
+                     PokemonCard, TraitMeters, EvolutionStrip
 ```
 
 **Every mode renders inside `ModeScreen`.** It owns the two corners — `HomeButton` top-left in every
@@ -183,7 +195,20 @@ thing through `Tappable` rather than inventing a hover/active style, keep tap ac
 work and a service worker can only precache what ships. Use `playAssets.js`.
 
 `--tap-min` overrides `Tappable`'s 88px tap-target floor for the rare control that should be *hard*
-to hit (Story mode's parent controls) — don't out-specify the base class.
+to hit (Story mode's parent controls) — don't out-specify the base class. It's also the escape hatch
+for a target that's already large by other means (a type-room tile, an evolution sprite), where the
+floor would otherwise force a minimum the layout doesn't want.
+
+**Corner grammar.** Top-left is always `HomeButton` → `/play`, in every mode, never restyled. Top
+right is `ModeScreen`'s `controls` slot: Explore puts a full-size `BackButton` ("up one level")
+there, Story will put its deliberately small parent controls there. Back navigates to an explicit
+parent path, never `navigate(-1)` — a deep-linked card would otherwise walk out of the app.
+
+**Glyph sizing contract.** `TypeGlyph` fills its box (`width/height: 100%`) and is sized by a
+wrapper element, never by overriding the SVG's own class — CSS Module ordering across files isn't
+guaranteed, so two rules fighting over `width` is a coin flip. Set `--glyph-cut` on an ancestor to
+whatever surface the glyph is drawn on; the few holes in a glyph (ghost eyes, dragon eye) punch
+through to it.
 
 ### Type theming
 

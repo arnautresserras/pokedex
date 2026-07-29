@@ -11,9 +11,9 @@ Revised against the silent / parent-narrated / Catalan spec revision.
 |---|---|
 | 0 · Motion vocabulary spike | **Shipped**, as `/play/motion` — kept in the app rather than thrown away. Its question (is a silent reveal satisfying?) needs the daughters, not a dev. |
 | 1 · Foundations | **Done.** Built, deployed to Pages, verified. Three deviations recorded under the slice. |
-| 2 · Home / mode switcher | **Built**, `verify` + build clean. Device check pending. Deviations recorded under the slice. |
-| 3 · Explore | Unblocked. Now has a route, a colour and a shell to grow into. |
-| 4 · Game | Unblocked, and the stronger candidate to take before 3 and 5 — see Sequencing. |
+| 2 · Home / mode switcher | **Done.** Built, deployed to Pages, reviewed on device. Five decisions recorded under the slice. |
+| 3 · Explore | **Built.** All three levels land; logic verified against the cache. Awaiting the device pass. Six decisions recorded under the slice. |
+| 4 · Game | Unblocked, and now the recommended next step. |
 | 5 · Story engine + forest story | Unblocked. |
 | 6 · PWA + device hardening | Not started. Its deploy half was pulled forward into Slice 1. |
 
@@ -160,7 +160,9 @@ offline-correct, and removes a third-party request. Verify Catalan glyphs render
 Routing section needs updating to match. *(Done — `CLAUDE.md` now documents two apps in one repo,
 the play tree, the silent-by-design rule, and the type-colour resolution.)*
 
-## Slice 2 — Home / mode switcher (≈half day) — **built, device check pending**
+## Slice 2 — Home / mode switcher (≈half day) — **done**
+
+Commit `3d44280`. Deployed and reviewed on the Pages build.
 
 - Three large tiles (Explore / Story / Game), each a distinct colour + pictogram, no text needed.
 - Persistent home affordance in the same corner position inside every mode.
@@ -200,11 +202,13 @@ Catalan labels (`Explora` / `Contes` / `Endevina`) sit under each pictogram — 
 the same reasoning the spec gives for showing Pokémon names as text: the parent reads it, the child
 learns its shape.
 
-**Not yet verified** — needs the iPad, not the dev machine: pictogram legibility at lap distance,
-the tile grid in both orientations (landscape columns / portrait rows), and that a full-height
-`<button>` tile lays its glyph and label out correctly in iPad Safari.
+**Still unanswered, and it can't be answered by a dev**: the acceptance criterion is that *a
+non-reader reaches all three modes unaided*. The layout, the pictograms and the corner button read
+correctly on the device, but whether the pictograms mean the right thing to a 4-year-old is the same
+kind of question Slice 0 left open — it needs the daughters. If one tile turns out not to land, it's
+a glyph swap in `ModeGlyph`, not a rework.
 
-## Slice 3 — Explore (≈1.5–2 days)
+## Slice 3 — Explore (≈1.5–2 days) — **built, device pass pending**
 
 **Type-room index:** 15 tiles from `TYPE_COLORS`, each with colour, pictogram, and a representative
 silhouette. The distribution is lopsided (water 28, ice 2) — the grid has to handle both ends
@@ -221,6 +225,52 @@ icon rows, no numbers, no bars.
 
 **Acceptance:** all 151 reachable; every card has working art and type badge; evolution taps
 advance; nothing plays audio.
+
+**What landed.** `src/play/typeRooms.js` (the 15 rooms as data — `modes.js`'s sibling),
+`src/play/utils/traits.js` and `utils/evolution.js`, three new shared components (`TypeGlyph`,
+`PlayTypeBadge`, `BackButton`), and `screens/explore/` — `Explore` (frame + sub-routing),
+`TypeRoomIndex`, `TypeRoom`, `PokemonCard`, `TraitMeters`, `EvolutionStrip`. `PlayApp` grew a
+`MODE_SCREENS` map, so slices 4 and 5 are one entry each rather than an edit to the route loop.
+
+**Six decisions worth keeping:**
+
+1. **The meters are ranked, not scaled.** Gen I weight runs 1hg (Gastly) to 4600hg (Snorlax), and on
+   a linear scale ~140 of the 151 land in the bottom fifth — every Pokémon a child taps would show
+   one pip and the row would carry no information at all. Ranking each value against all 151 gives
+   five equal groups (verified: 31/30/30/30/30 on weight), so the pips actually move between one
+   Pokémon and the next. Which is the whole point of a meter a pre-reader can't read a number off.
+2. **`:type` in a card's URL is the room you came from, not the Pokémon's type.** Evolution can walk
+   you from Eevee's Normal room to Vaporeon, and back has to return where the child started rather
+   than to a Water room they never opened. The card takes its *colour* from the Pokémon's own type
+   regardless — that beige-to-blue change is most of what makes an evolution feel like an event.
+3. **Evolution advances `replace` the history entry.** Caterpie → Metapod → Butterfree would
+   otherwise bury the room three steps down, and back is a child's escape hatch: it has to mean "out
+   of this card", not "one evolution ago".
+4. **Back is a second corner button, not a contextual home button.** `HomeButton` is documented as
+   the one fixed point in the app and must never mean two things, so Explore's three levels needed a
+   step-back of their own. It goes in `ModeScreen`'s `controls` slot at full tap-target size — the
+   slot is generic; Story's *choice* to put small controls there is Story's. It navigates to an
+   explicit parent path rather than `navigate(-1)`, which on a deep-linked card would walk out of
+   the app entirely.
+5. **Room tiles are fixed-width cells centred, not `1fr` columns.** Verí has 33 members and
+   Fantasma has 3; stretchy columns would blow the three ghosts up to a third of the screen each,
+   which reads as a broken screen rather than a small room. This is the plan's "handle both ends"
+   line, and fixed cells are the whole answer: a small room is simply a short one.
+6. **Glyphs are sized by a wrapper, never by overriding the SVG's class.** CSS Module ordering
+   across files isn't guaranteed, so a consumer's `.glyph { width: … }` racing the base
+   `.glyph { width: 100% }` is a coin flip that would have shown up as one wrong-sized icon on the
+   iPad and nowhere else. Now recorded in `CLAUDE.md` as the contract.
+
+**Verified against the cache, not just the build**: all 151 reachable across the 15 rooms with no
+orphans, every room's representative face is a member of its own room, Pichu and Munchlax filtered
+out of their chains, Eevee's three branches resolved, Ditto and Snorlax correctly showing no chain,
+`steel`/`fairy` dropped on Magnemite and Mr Mime, and every route rendering without throwing.
+
+**Still unanswered, same class as slices 0 and 2**: whether the 15 type pictograms mean anything to
+a pre-reader. Fifteen is a lot more glyphs to get wrong than three, and the fallback is the same —
+the colour and the watermark silhouette carry the tile even if the pictogram misses, and a miss is a
+shape swap in `TypeGlyph`, not a rework. Also untested on device: whether a child scrolls the Verí
+room unprompted, which is the one place in the app that scrolls.
 
 ## Slice 4 — Game: Who's that Pokémon? (≈1–1.5 days)
 
@@ -310,9 +360,10 @@ once 1 and 2 land — Game remains the cheapest path to something the daughters 
 it now doubles as the real test of whether silent feedback works, so there's a good argument for
 taking it before Story.
 
-With 0, 1 and 2 done, **nothing gates anything**: 3, 4 and 5 can be taken in any order, each fills
-in the body of a shell that already exists, and 6 only needs one of them to be worth installing.
-**Game is the recommended next step** for the reason above.
+With 0, 1, 2 and 3 done, **nothing gates anything**: 4 and 5 can be taken in either order, each
+fills in the body of a shell that already exists, and 6 only needs one of them to be worth
+installing. **Game is the recommended next step** for the reason above — and Slice 3 left it a
+`MODE_SCREENS` entry, `TypeGlyph`, `PlayTypeBadge` and the ranked-trait module to build on.
 
 Rough total: **8–10 working days**. Cutting audio didn't buy time; it moved it into motion design,
 self-hosted typography, and Catalan authoring.
@@ -322,5 +373,14 @@ self-hosted typography, and Catalan authoring.
 - Is a visual-only reveal satisfying? → the spike is live at `/play/motion` and the primitives read
   correctly on the device, but the actual question is unanswered: it needs the daughters, and it gets
   its real test in Slice 4.
+- Do the three mode pictograms mean the right thing to a non-reader? → the switcher is live at
+  `/play` and reads correctly on the device; same class of question as above, and the fix is a glyph
+  swap in `ModeGlyph` if one of them misses.
+- Do the fifteen *type* pictograms? → same question, five times the surface. Colour and the
+  watermark silhouette carry a tile even where the glyph misses, so a miss costs a shape swap in
+  `TypeGlyph`, not a rework.
+- Does a child scroll a big type room unprompted? → the Verí room (33 members) is the only scrolling
+  surface in the app. If not, the fallback is paging rather than scrolling, which is a change to one
+  component.
 - Per-child profiles → only matters once favorites exist (P1).
 - Whether to retire the print book → no action; it keeps working.

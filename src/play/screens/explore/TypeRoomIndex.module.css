@@ -1,0 +1,83 @@
+/* The one screen in Explore that keeps the mode's own colour: the rooms are the content, so
+   the frame behind them has to be Explore's blue and not a sixteenth type. */
+.index {
+  box-sizing: border-box;
+  height: 100%;
+  /* The home button owns the top-left corner. Reserving a strip for it is cheaper than
+     letting a tile sit underneath it — a child aiming at the Normal room and landing on Home
+     learns that the rooms are unreliable. */
+  padding: calc(var(--play-gap) + var(--play-target) * 0.72) var(--play-gap) var(--play-gap);
+  background: radial-gradient(circle at 50% 0%, var(--color-primary), var(--color-accent) 85%);
+}
+
+/* Fifteen tiles, one screenful, never scrolled — 5 × 3 in landscape, 3 × 5 in portrait. Both
+   are exact: the grid is sized in fractions of the box, so it can't spill. */
+.grid {
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: var(--play-gap);
+}
+
+@media (orientation: portrait) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+  }
+}
+
+.room {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  /* Tiles at 1/15th of a screen are below the 88px floor in one axis on portrait; the whole
+     tile is the target and it's still far larger than a fingertip. */
+  --tap-min: 0;
+  padding: clamp(6px, 1.4vmin, 16px);
+  border-radius: clamp(14px, 2.4vmin, 24px);
+  background: linear-gradient(158deg, var(--color-primary), var(--color-accent));
+  box-shadow: 0 0.6vmin 1.8vmin rgba(0, 0, 0, 0.36);
+  display: grid;
+  grid-template-rows: 1fr auto;
+  place-items: center;
+  gap: clamp(2px, 0.8vmin, 8px);
+  overflow: hidden;
+  color: #fff;
+  /* Glyph holes punch through to the tile, not to the screen behind it. */
+  --glyph-cut: var(--color-primary);
+}
+
+/* The room's most recognisable member, backgrounded: present enough to say "someone lives
+   here", faint enough that the pictogram stays the subject. */
+.watermark {
+  position: absolute;
+  right: -12%;
+  bottom: -14%;
+  width: 74%;
+  opacity: 0.28;
+  filter: brightness(0) saturate(0);
+  pointer-events: none;
+}
+
+.glyphBox {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  filter: drop-shadow(0 0.3vmin 0.9vmin rgba(0, 0, 0, 0.35));
+}
+
+.label {
+  position: relative;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(0.7rem, 2.4vmin, 1.5rem);
+  line-height: 1;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-shadow: 0 0.2vmin 0.7vmin rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+}

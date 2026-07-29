@@ -1,0 +1,16 @@
+/* Deliberately the same geometry as HomeButton: two corners, one row, same weight. */
+.back {
+  width: var(--play-target);
+  height: var(--play-target);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.chevron {
+  width: 62%;
+  height: 62%;
+  display: block;
+  /* Has to read over full-bleed hero art of any colour, hence the disc behind the stroke. */
+  filter: drop-shadow(0 0.4vmin 1.2vmin rgba(0, 0, 0, 0.45));
+}

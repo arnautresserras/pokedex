@@ -1,0 +1,48 @@
+.meters {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4px, 1.2vmin, 12px);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 1.4vmin, 14px);
+}
+
+/* Parent-facing, so it's allowed to be small — but it holds a fixed column so the three pip
+   rows line up and can be compared to each other at a glance. */
+.label {
+  flex: 0 0 auto;
+  width: 5.5em;
+  font-family: var(--font-mono);
+  font-size: clamp(0.6rem, 1.5vmin, 0.85rem);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--play-ink-dim);
+}
+
+.pips {
+  display: flex;
+  align-items: center;
+  gap: clamp(3px, 0.9vmin, 9px);
+}
+
+.pip {
+  width: clamp(16px, 3.2vmin, 30px);
+  height: clamp(16px, 3.2vmin, 30px);
+  display: block;
+  transform: scale(var(--pip-scale));
+}
+
+.lit {
+  color: var(--color-primary);
+  filter: drop-shadow(0 0 0.6vmin rgba(0, 0, 0, 0.4));
+}
+
+/* Unlit pips stay visible: "one out of five" only means something if the other four are
+   there to be seen. */
+.unlit {
+  color: var(--play-ink);
+  opacity: 0.16;
+}
