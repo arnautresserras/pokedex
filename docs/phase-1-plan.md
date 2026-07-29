@@ -13,8 +13,8 @@ Revised against the silent / parent-narrated / Catalan spec revision.
 | 1 · Foundations | **Done.** Built, deployed to Pages, verified. Three deviations recorded under the slice. |
 | 2 · Home / mode switcher | **Done.** Built, deployed to Pages, reviewed on device. Five decisions recorded under the slice. |
 | 3 · Explore | **Built.** All three levels land; logic verified against the cache. Awaiting the device pass. Six decisions recorded under the slice. |
-| 4 · Game | Unblocked, and now the recommended next step. |
-| 5 · Story engine + forest story | Unblocked. |
+| 4 · Game | **Built.** Rounds and both phases verified against the cache. Awaiting the device pass — which is also the answer to Slice 0's open question. Six decisions recorded under the slice. |
+| 5 · Story engine + forest story | Unblocked, and now the only Phase 1 feature slice left. |
 | 6 · PWA + device hardening | Not started. Its deploy half was pulled forward into Slice 1. |
 
 Nothing about the plan below has changed shape as a result of Slices 1–2 — the risks they name
@@ -28,6 +28,7 @@ are still the risks.
 | Routing / build | **HashRouter, one build.** `base: '/Pokedex/'`, print book lazy-loaded. Real routes, no GitHub Pages 404 trick, fixes the book's deploy too. |
 | Explore layout | **Type rooms.** ~15 big colored type tiles → tap one → that type's grid. Answers "less overwhelming" with no unlock/progress model. |
 | Story scope | **One polished story + a data-driven engine.** Forest ships complete; stories 2–3 become pure content files in Phase 2. *(Now recorded in the spec.)* |
+| Type pictograms | **Vendored, not drawn.** The 15 icons come from `partywhale/pokemon-type-icons` (MIT, a vector recreation of the modern games' set) via a fetch script, replacing Slice 3's hand-drawn glyphs. See the note under Slice 3. |
 
 Two of these settle questions still listed as open in the spec — Explore's layout, and
 routes-vs-state. Treat them as closed.
@@ -266,13 +267,40 @@ orphans, every room's representative face is a member of its own room, Pichu and
 out of their chains, Eevee's three branches resolved, Ditto and Snorlax correctly showing no chain,
 `steel`/`fairy` dropped on Magnemite and Mr Mime, and every route rendering without throwing.
 
+**Changed after the fact — the glyphs are now vendored, not drawn.** `TypeGlyph`'s 15 hand-drawn
+shapes were replaced with the modern games' type icons, via `scripts/fetch-type-icons.js` →
+generated `src/play/typeIcons.js` (source: `partywhale/pokemon-type-icons`, MIT, licence vendored
+alongside). Three things worth keeping about the swap:
+
+1. **The reason is recognition transfer, not looks.** "Draw the thing, not the concept" was the
+   right rule with nothing better available, but these are the shapes the child meets again on a
+   card, a sticker or a screenshot, so what they learn here doesn't stop at the app. The cost is
+   that a few are *less* literal than what they replaced — Normal is a ring, Psíquic a swirl — so
+   the guessable ones became learnable ones. Colour and the watermark silhouette still carry the
+   tile, which is what makes that affordable.
+2. **The disc is dropped and the crop is computed.** Upstream ships circular badges; keeping the
+   disc would put the icon set's own slightly-different green on top of a screen already painted
+   in `TYPE_COLORS`. Dropping it leaves the symbols filling only 53–67% of the 256 box, so the
+   script measures all 15 and emits one shared `viewBox` (the union, `42 42 172 172`) — shared
+   rather than per-icon because the set was drawn with deliberate relative sizes, and normalising
+   each glyph to its own box would throw that away. Computed rather than hardcoded so an upstream
+   redraw can't silently clip anything.
+3. **`--glyph-cut` is gone.** Upstream draws a few detail shapes (ghost eyes, a water wave,
+   Normal's inner ring) in a shade of the disc, i.e. as holes. The old mechanism filled them with a
+   flat surface colour, which was close enough for two small eyes but is visibly wrong for
+   Normal's hole across a gradient tile. They're now cut with an SVG mask, so a hole shows whatever
+   is actually behind it and there's no colour to get wrong. The mask region is pinned to the
+   viewBox in user space — the defaulted `objectBoundingBox` region is the one genuinely
+   renderer-dependent corner of SVG masking.
+
 **Still unanswered, same class as slices 0 and 2**: whether the 15 type pictograms mean anything to
 a pre-reader. Fifteen is a lot more glyphs to get wrong than three, and the fallback is the same —
-the colour and the watermark silhouette carry the tile even if the pictogram misses, and a miss is a
-shape swap in `TypeGlyph`, not a rework. Also untested on device: whether a child scrolls the Verí
+the colour and the watermark silhouette carry the tile even if the pictogram misses. A miss is now a
+different kind of fix, though: the shapes are vendored, so it's a wrapper-size or contrast change
+rather than a redraw. Also untested on device: whether a child scrolls the Verí
 room unprompted, which is the one place in the app that scrolls.
 
-## Slice 4 — Game: Who's that Pokémon? (≈1–1.5 days)
+## Slice 4 — Game: Who's that Pokémon? (≈1–1.5 days) — **built, device pass pending**
 
 - Silhouette via `filter: brightness(0)` on the vendored art. Three options: the answer plus two
   visually distinct distractors (easier is correct for this age).
@@ -281,6 +309,72 @@ room unprompted, which is the one place in the app that scrolls.
   too, then reveal the right answer. No score, no streak, no fail state.
 - Must be unambiguous muted, and must not rely on timing the child can't perceive.
 - Reduced-motion variant still has to signal correctness, not just skip the animation.
+
+**What landed.** `src/play/utils/rounds.js` (the round as data) and `screens/game/` — `Game` (frame
+plus the round state), `SilhouetteStage` (the question and the reveal), `AnswerOptions` (the three
+answers). One `MODE_SCREENS` entry, exactly as Slice 3 left it. No new shared component: the mode is
+built entirely out of `ModeScreen`, `Tappable` and `Celebrate`.
+
+**Six decisions worth keeping:**
+
+1. **The answers are pictures, and they come from the same file as the silhouette.** A list of names
+   isn't an option for a non-reader — literally — so the round is a shape match: one black
+   silhouette above, three full-colour arts below. All four are `artUrl(id)`, the same 512px
+   artwork, so the pose the child is matching is the pose they're looking at. The front sprites were
+   the obvious cheaper choice and are wrong here: a sprite is a *different pose* of the same
+   Pokémon, which quietly turns an easy match into a trick question.
+2. **"Visually distinct" is inferred from three cache fields, and it's load-bearing.** If two
+   options share a silhouette the round has no answer a child could defend. There's no image
+   analysis available, so distinctness comes from family (Caterpie and Metapod are the same drawing
+   twice), primary type (the colour it's painted in) and the ranked height band from `traits.js`
+   (tall vs squat). All three are required, with a ladder that relaxes height, then type, if no
+   candidate qualifies — family never relaxes, because it's the only one whose failure is genuinely
+   ambiguous. In 20,000 rounds against the real cache the ladder never had to relax at all.
+3. **Mode colour is the UI, type colour is the Pokémon.** The options row and the "this is the one"
+   ring stay amber in every round, so the correct-answer mark means the same thing every time. The
+   *stage* switches to the Pokémon's own type colour on reveal — the same beige-to-blue trick that
+   makes an evolution feel like an event in Explore. Which is also why the type colour is injected
+   only *after* the tap: while asking, a type-coloured light pool behind the silhouette would
+   quietly announce the answer.
+4. **The reveal fires four signals, and only one of them is animation.** Colour filling the shape,
+   `Celebrate`'s pop and sparks, the light pool changing colour, and the `?` becoming the name.
+   That's what makes the `prefers-reduced-motion` path honest rather than a downgrade: three of the
+   four are instant state changes and survive intact. The correct-answer mark is deliberately a
+   *static* ring plus tick for the same reason — a round's outcome must never be carried by motion
+   alone, and the plan asks for a reduced-motion variant that still signals correctness.
+5. **A wrong tap dims, and nothing more.** No red, no cross, no shake. The tapped cell steps back
+   with a thin neutral outline (so the child can see what they chose) while the answer lights up,
+   and the celebration on the stage fires either way. Honest about which shape was right — the point
+   of the game — with nothing a 4-year-old reads as failure.
+6. **A round is state, not a route.** Explore's levels are real routes because a card is worth
+   linking to; a random round isn't, and a URL for one would either be a lie or would have to seed
+   the randomness. So `/play/game` is the whole mode and anything deeper redirects to it. `picked`
+   doubles as the phase — `null` asks, an id reveals — so the two halves of the screen can't
+   disagree about which state they're in.
+
+Nothing auto-advances, per the plan's "must not rely on timing the child can't perceive": the reveal
+holds until it's tapped past, and both the arrow *and* the revealed art advance, because a child
+handed a Pokémon that just burst into colour taps the Pokémon. Recent answers are barred from
+recurring (12 deep) — random with replacement repeats often enough over 151 that a repeat right
+after a reveal reads as a broken app rather than as chance.
+
+**Verified against the cache, not just the build**: 20,000 rounds with no duplicate option, no
+missing answer, no same-family pair, and the strict distinctness tier never relaxing; all 151
+appearing both as answers and as distractors; the answer landing in each of the three slots equally
+often (6606 / 6747 / 6647); the recent list never leaking. Then both phases server-rendered for all
+151 — the reveal always shows its own name and its own art, and exactly one tick appears, on the
+answer, whether the pick was right or wrong.
+
+**Not added to `npm run verify`.** The round invariants are the natural fourth entry there, but
+`verify-play.js` runs under plain Node and the play utils use extensionless imports that only Vite
+resolves — wiring it up means either a loader shim in the script or changing the import style across
+`src/play/utils/`, and neither is worth it for logic with no content to drift. The exercise above is
+recorded here instead.
+
+**Still unanswered, and this is the big one**: whether a silent reveal actually satisfies a
+4-year-old. Slices 0, 2 and 3 each left a question only the daughters can answer; this is the one
+the spike was built for, and Game mode is where it gets its real test. If the verdict is lukewarm,
+the fix is `SilhouetteStage` and `Celebrate` — not the round logic, and not the layout.
 
 ## Slice 5 — Story engine + forest story (≈2–2.5 days)
 
@@ -360,25 +454,26 @@ once 1 and 2 land — Game remains the cheapest path to something the daughters 
 it now doubles as the real test of whether silent feedback works, so there's a good argument for
 taking it before Story.
 
-With 0, 1, 2 and 3 done, **nothing gates anything**: 4 and 5 can be taken in either order, each
-fills in the body of a shell that already exists, and 6 only needs one of them to be worth
-installing. **Game is the recommended next step** for the reason above — and Slice 3 left it a
-`MODE_SCREENS` entry, `TypeGlyph`, `PlayTypeBadge` and the ranked-trait module to build on.
+With 0–4 done, **only 5 and 6 are left and neither gates the other**. Story fills in the last
+placeholder shell; PWA hardening is already worth doing, because Explore and Game together are
+enough to install. Story is the bigger of the two and the one with authoring in it, so taking 6
+first is a defensible way to get something on the home screen sooner — but 5 is what makes Phase 1
+complete.
 
 Rough total: **8–10 working days**. Cutting audio didn't buy time; it moved it into motion design,
 self-hosted typography, and Catalan authoring.
 
 ## Still open (not blocking Phase 1)
 
-- Is a visual-only reveal satisfying? → the spike is live at `/play/motion` and the primitives read
-  correctly on the device, but the actual question is unanswered: it needs the daughters, and it gets
-  its real test in Slice 4.
+- Is a visual-only reveal satisfying? → the primitives read correctly on the device at
+  `/play/motion`, and Slice 4 has now built the screen the question was really about. Still
+  unanswered, because it needs the daughters. `/play/game` is where it gets asked properly.
 - Do the three mode pictograms mean the right thing to a non-reader? → the switcher is live at
   `/play` and reads correctly on the device; same class of question as above, and the fix is a glyph
   swap in `ModeGlyph` if one of them misses.
-- Do the fifteen *type* pictograms? → same question, five times the surface. Colour and the
-  watermark silhouette carry a tile even where the glyph misses, so a miss costs a shape swap in
-  `TypeGlyph`, not a rework.
+- Do the fifteen *type* pictograms? → same question, five times the surface, and now asked of the
+  games' own icons rather than of ours (see Slice 3). Colour and the watermark silhouette carry a
+  tile even where the glyph misses, so a miss costs a sizing or contrast change, not a rework.
 - Does a child scroll a big type room unprompted? → the Verí room (33 members) is the only scrolling
   surface in the app. If not, the fallback is paging rather than scrolling, which is a change to one
   component.

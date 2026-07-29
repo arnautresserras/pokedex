@@ -1,0 +1,104 @@
+.stage {
+  position: relative;
+  box-sizing: border-box;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  justify-items: center;
+  align-items: center;
+  /* Top inset clears the home button's corner; the sides keep the name clear of it too. */
+  padding: calc(var(--play-gap) + var(--play-target) * 0.35)
+    calc(var(--play-target) + var(--play-gap)) 0;
+}
+
+/* The light pool the silhouette is read against — a black shape on a dark screen needs one.
+   It's the mode's amber while asking and the Pokémon's own colour once revealed, which is
+   signal (3) of the four the component's note lists. */
+.stage::before {
+  content: '';
+  position: absolute;
+  inset: 12% 12% 4%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--color-primary), transparent 66%);
+  opacity: 0.34;
+  pointer-events: none;
+  transition: opacity var(--motion-base) var(--ease-out);
+}
+
+.stage[data-revealed]::before {
+  opacity: 0.55;
+}
+
+/* `?` while asking, the name once revealed. Same row, same size — sized for the parent to read
+   from a chair away, like the card's name. */
+.name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(1.6rem, 6vmin, 4rem);
+  line-height: 1;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--play-ink);
+  text-shadow: 0 0.3vmin 1.4vmin rgba(0, 0, 0, 0.5);
+}
+
+.celebrate {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Sized absolutely, not as a percentage: `Celebrate` centres its child at the child's own
+   size, so a percentage would resolve against the 512px source. Same note as the card's hero. */
+.artTap {
+  width: clamp(120px, 40vmin, 460px);
+  height: clamp(120px, 40vmin, 460px);
+  display: grid;
+  place-items: center;
+}
+
+.art {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* The question. Signal (1) of the reveal is this line switching off. */
+  filter: brightness(0) drop-shadow(0 1vmin 2vmin rgba(0, 0, 0, 0.45));
+}
+
+.stage[data-revealed] .art {
+  filter: drop-shadow(0 1.4vmin 3vmin rgba(0, 0, 0, 0.5));
+}
+
+/* Bottom-right of the stage, diagonally opposite the home button and well clear of the
+   options row — the only two things a child can tap after a reveal are this and the art. */
+.next {
+  position: absolute;
+  right: var(--play-gap);
+  bottom: 0;
+  width: var(--play-target);
+  height: var(--play-target);
+  border-radius: 50%;
+  filter: drop-shadow(0 0.4vmin 1.2vmin rgba(0, 0, 0, 0.45));
+  animation: nextIn var(--motion-base) var(--ease-pop) both;
+}
+
+.next svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes nextIn {
+  from { opacity: 0; transform: scale(0.7); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage::before,
+  .next {
+    animation: none;
+    transition: none;
+  }
+}

@@ -4,19 +4,22 @@ import PlayHome from './screens/PlayHome'
 import MotionLab from './screens/MotionLab'
 import ModePlaceholder from './screens/ModePlaceholder'
 import Explore from './screens/explore/Explore'
+import Game from './screens/game/Game'
 import { MODES } from './modes'
 import './play.css'
 
 /**
  * The screen a mode is built out. A mode with no entry here still gets its route, its colour
- * and its shell — `ModePlaceholder` — so slices 4 and 5 are one line each and a tapped tile
- * never goes nowhere in the meantime.
+ * and its shell — `ModePlaceholder` — so slice 5 is one line and a tapped tile never goes
+ * nowhere in the meantime.
  *
  * Every mode screen owns a subtree (`/play/<id>/*`), not a single path: Explore alone is
- * three levels deep, and its inner routing is its own business.
+ * three levels deep, and its inner routing is its own business. Game has no second level and
+ * says so by redirecting anything deeper.
  */
 const MODE_SCREENS = {
   explore: Explore,
+  game: Game,
 }
 
 /**

@@ -1,0 +1,15 @@
+/* Silhouette above, answers below, in both orientations. The question and the three answers
+   have to be on screen together — a child comparing shapes looks back and forth — so nothing
+   here scrolls and nothing is off-screen. */
+.game {
+  box-sizing: border-box;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  /* The mode's own colour, the same gradient shape the card uses for a type. */
+  background: linear-gradient(165deg, var(--color-accent), var(--play-bg) 76%);
+}
+
+.options {
+  flex: 0 0 auto;
+}
