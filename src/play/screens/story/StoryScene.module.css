@@ -6,7 +6,9 @@
 }
 
 /* Landscape: words on the left, the tappable thing on the right, both anchored to the bottom
-   edge. The top of the screen is left to the backdrop and the two corner buttons. */
+   edge. The top of the screen is left to the backdrop and the two corner buttons. Base case is
+   the encounter's shape — a single full-height row, so the hero art can rise up into it — and
+   the rule below adds a second, `protagonist`-only row on top of it for choice scenes. */
 .layout {
   position: relative;
   box-sizing: border-box;
@@ -16,6 +18,50 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, auto);
   gap: var(--play-gap);
   align-items: end;
+}
+
+.narration {
+  /* Bottom-anchored and capped by the row, so a long scene scrolls inside the panel rather than
+     growing off the screen. */
+  max-height: 100%;
+}
+
+.action {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* Choice scenes only: a flexible row above narration/action, holding `protagonist` — a GBA
+   overworld keeps the player sprite on the left, so it stands there rather than floating in the
+   open middle of the screen (which absolute-positioning it over the backdrop did). The row is
+   `1fr` so it absorbs whatever space the `auto` narration/action row below doesn't need, and
+   `.protagonist`'s `align-self: end` pins the sprite to the *bottom* of that space — directly
+   above the panel, regardless of how tall the panel gets.
+   Encounter scenes are excluded on purpose: they never carry a protagonist, and the single
+   full-height row above is what lets the hero art rise up into the empty upper area. */
+.layout:not([data-action='encounter']) {
+  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'protagonist .'
+    'narration action';
+}
+
+.layout:not([data-action='encounter']) .narration {
+  grid-area: narration;
+}
+
+.layout:not([data-action='encounter']) .action {
+  grid-area: action;
+}
+
+.protagonist {
+  grid-area: protagonist;
+  justify-self: start;
+  align-self: end;
 }
 
 /* The encounter needs room for full-size hero art, so it takes a real half of the width and
@@ -49,19 +95,15 @@
   .layout[data-action='encounter'] .action {
     padding-top: 0;
   }
-}
 
-/* Bottom-anchored in landscape and capped by the row, so a long scene scrolls inside the panel
-   rather than growing off the screen. */
-.narration {
-  max-height: 100%;
-}
-
-.action {
-  position: relative;
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  /* The protagonist moves with the rest: off the GBA-style left edge (there's no "left" once
+     there's one column) and onto the corner the choice tiles leave free — bottom-left, standing
+     just above them. Same `1fr`-then-`align-self: end` trick, rotated into a third row. */
+  .layout:not([data-action='encounter']) {
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'narration'
+      'protagonist'
+      'action';
+  }
 }

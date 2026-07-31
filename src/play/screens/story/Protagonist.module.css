@@ -1,0 +1,13 @@
+/* A normal flex child of `.action`, stacked above the choices — not absolutely positioned over
+   the backdrop, which either floated in open space (landscape) or ended up hidden behind the
+   narration panel on a long scene (portrait). */
+.protagonist {
+  flex-shrink: 0;
+  height: clamp(64px, 24vmin, 256px);
+  width: auto;
+  /* A GBA-era pixel sprite scaled well past its native size: crisp edges read as "a sprite",
+     smoothing just reads as blurry. */
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0.6vmin 1.6vmin rgba(0, 0, 0, 0.45));
+  pointer-events: none;
+}

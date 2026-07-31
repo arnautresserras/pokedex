@@ -1,5 +1,6 @@
 import Backdrop from './Backdrop'
 import Narration from './Narration'
+import Protagonist from './Protagonist'
 import styles from './StoryScene.module.css'
 
 /**
@@ -18,13 +19,24 @@ import styles from './StoryScene.module.css'
  * an iPad reads from the lower half, which is also where their thumbs are. That leaves the
  * upper two thirds for the backdrop, so the scene the child is looking at is the biggest thing
  * on screen while the parent talks over it.
+ *
+ * `protagonist` is an optional story-supplied id (`story.protagonist`) — a grid sibling of
+ * `Narration` and the action slot, not part of the backdrop layer, which would either float in
+ * open space with nothing to anchor it to or, on a long scene, end up hidden behind the
+ * narration panel. It never shows on an encounter, whose stage belongs to the Pokémon alone; see
+ * `StoryScene.module.css` for where it actually stands.
  */
-export default function StoryScene({ scene, kind, children }) {
+export default function StoryScene({ scene, kind, protagonist, children }) {
+  const isEncounter = kind === 'encounter'
+
   return (
     <div className={styles.scene}>
       <Backdrop id={scene.backdrop} />
 
       <div className={styles.layout} data-action={kind}>
+        {!isEncounter && protagonist && (
+          <Protagonist id={protagonist} className={styles.protagonist} />
+        )}
         <Narration lines={scene.narration} className={styles.narration} />
         <div className={styles.action}>{children}</div>
       </div>

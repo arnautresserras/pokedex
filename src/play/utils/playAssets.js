@@ -16,3 +16,8 @@ export function artUrl(id) {
 export function spriteUrl(id) {
   return `${BASE}pkmn/sprite/${id}.png`
 }
+
+/** Back sprite — the small pixel sprite seen from behind, for a story told from the trail. */
+export function backSpriteUrl(id) {
+  return `${BASE}pkmn/back/${id}.png`
+}

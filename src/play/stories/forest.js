@@ -27,6 +27,10 @@
 export const FOREST = {
   id: 'forest',
   start: 'edge',
+  // The back sprite standing on the trail in every narrated scene — see peopleSprites.js and
+  // Protagonist.jsx. Not shown in the two encounter scenes: the stage there belongs to the
+  // Pokémon, the same way Explore's card never shares its light pool with anything else.
+  protagonist: 'frlg-red-back',
   scenes: {
     edge: {
       backdrop: 'forest-edge',

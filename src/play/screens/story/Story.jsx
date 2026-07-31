@@ -126,7 +126,11 @@ function StoryPlayer({ mode, story }) {
         direction={dir}
         className={styles.stage}
       >
-        <StoryScene scene={scene} kind={isEncounter ? 'encounter' : 'choices'}>
+        <StoryScene
+          scene={scene}
+          kind={isEncounter ? 'encounter' : 'choices'}
+          protagonist={story.protagonist}
+        >
           {isEncounter ? (
             // `met` is null only if a pool resolved empty, which `verify` fails the build on.
             // If it ever happens at runtime the scene still renders its words and the parent's
