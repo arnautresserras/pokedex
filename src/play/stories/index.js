@@ -1,5 +1,9 @@
 import { FOREST } from './forest.js'
 import { FOREST_CA } from './forest.ca.js'
+import { ROUTE1 } from './route1.js'
+import { ROUTE1_CA } from './route1.ca.js'
+import { PIKAFIELD } from './pikafield.js'
+import { PIKAFIELD_CA } from './pikafield.ca.js'
 
 /**
  * The stories, as data — `modes.js` and `typeRooms.js`'s sibling, one mode down.
@@ -41,9 +45,11 @@ export function withText(graph, text) {
 
 export const STORIES = {
   forest: withText(FOREST, FOREST_CA),
+  route1: withText(ROUTE1, ROUTE1_CA),
+  pikafield: withText(PIKAFIELD, PIKAFIELD_CA),
 }
 
-/** Authoring order — what a picker screen would render once there's a second story. */
+/** Authoring order — what `StoryPicker` renders, tile by tile. */
 export const STORY_LIST = Object.values(STORIES)
 
 export function getStory(id) {

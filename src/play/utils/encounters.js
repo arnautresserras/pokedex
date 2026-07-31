@@ -24,6 +24,12 @@ export const STORY_POOLS = {
   // Pikachu in the forest proper, plus Pidgey and Rattata out where the trees thin. Seven,
   // which is enough that a child can meet a new one several visits running.
   forest: ['Viridian Forest', 'Route 2'],
+  // The road out of Pallet Town — birds, rodents and the two Nidoran out where the grass is
+  // tall.
+  route1: ['Route 1', 'Route 22'],
+  // The scrubland around the Power Plant fence — Pikachu itself, both Magnemite lines and a
+  // rare Zapdos overhead.
+  'plant-fence': ['Power Plant'],
 }
 
 /** location → ids, built once. `CATCH_LOCATIONS` is a committed constant, so once is enough. */

@@ -1,10 +1,11 @@
 import { useRef, useState } from 'react'
-import { Routes, Route, Navigate, useParams } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { useAllPokemon } from '../../../hooks/usePokemon'
 import { ModeScreen } from '../../components'
 import { SceneTransition } from '../../motion'
 import { STORY_LIST, getStory, storyPath } from '../../stories'
 import { pickEncounter } from '../../utils/encounters'
+import StoryPicker from './StoryPicker'
 import StoryScene from './StoryScene'
 import SceneChoices from './SceneChoices'
 import Encounter from './Encounter'
@@ -33,9 +34,21 @@ const RECENT = 3
 export default function Story({ mode }) {
   return (
     <Routes>
-      {/* One story, so the index goes straight in: a picker holding a single tile is a screen a
-          child has to cross for no choice. When there's a second story this becomes it. */}
-      <Route index element={<Navigate to={storyPath(STORY_LIST[0])} replace />} />
+      {/* A picker with one tile is a screen a child has to cross for no choice, so a single
+          story used to skip straight in — now that there are several, the index is the front
+          door rather than a detour through the first one. */}
+      <Route
+        index
+        element={
+          STORY_LIST.length > 1 ? (
+            <ModeScreen mode={mode}>
+              <StoryPicker />
+            </ModeScreen>
+          ) : (
+            <Navigate to={storyPath(STORY_LIST[0])} replace />
+          )
+        }
+      />
       <Route path=":storyId" element={<StoryRoute mode={mode} />} />
       <Route path="*" element={<Navigate to="/play/story" replace />} />
     </Routes>
@@ -56,6 +69,7 @@ function StoryRoute({ mode }) {
 
 function StoryPlayer({ mode, story }) {
   const roster = useAllPokemon()
+  const navigate = useNavigate()
 
   // Recent encounters live in a ref, exactly as Game's do: they're only ever read and written
   // from a tap, so they have no business triggering a render.
@@ -104,7 +118,14 @@ function StoryPlayer({ mode, story }) {
 
   // Meeting another resident of the same place doesn't move the story, so it's the one move
   // that changes `met` alone. Picked outside the updater: the ref mutation must happen once.
+  // But an encounter that names a `next` (see forest.js's header vs. route1.js's) isn't the
+  // forest's replay loop — it's the doorway to that branch's own closing scene, so the tap
+  // advances the path instead of re-rolling the same stage.
   const another = () => {
+    if (scene.next) {
+      enter([...path, scene.next], 'forward')
+      return
+    }
     const next = meet(scene)
     setState(current => ({ ...current, met: next }))
   }
@@ -115,7 +136,12 @@ function StoryPlayer({ mode, story }) {
     <ModeScreen
       mode={mode}
       controls={
-        <ParentControls onBack={back} canBack={path.length > 1} onRestart={restart} />
+        <ParentControls
+          onBack={back}
+          canBack={path.length > 1}
+          onRestart={restart}
+          onStories={STORY_LIST.length > 1 ? () => navigate('/play/story') : null}
+        />
       }
     >
       {/* Keyed on depth *and* scene, so walking back into a scene animates as a move too. With

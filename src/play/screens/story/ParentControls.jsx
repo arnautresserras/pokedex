@@ -19,8 +19,13 @@ import styles from './ParentControls.module.css'
  * Back stays mounted and merely disabled on the first scene. Hiding it would shift restart
  * sideways between scenes, and a control that moves is a control a parent has to look at
  * instead of reaching for while reading.
+ *
+ * `onStories` is the odd one out: it doesn't touch this story's scene state at all, it leaves
+ * it, back to the picker. Optional and only passed once there's more than one story to switch
+ * to — same "choosing to hear it again is a parent's decision" reasoning `Encounter.jsx`
+ * documents for restart, extended to choosing *which* story.
  */
-export default function ParentControls({ onBack, canBack, onRestart }) {
+export default function ParentControls({ onBack, canBack, onRestart, onStories }) {
   return (
     <div className={styles.controls}>
       <Tappable
@@ -67,6 +72,31 @@ export default function ParentControls({ onBack, canBack, onRestart }) {
           />
         </svg>
       </Tappable>
+
+      {onStories && (
+        <Tappable
+          className={styles.control}
+          onTap={onStories}
+          pressScale={0.88}
+          aria-label="Tria un altre conte"
+        >
+          <svg viewBox="0 0 32 32" aria-hidden="true">
+            {/* Two stacked pages — "a different one of these", the same book-of-many idea as
+                Explore's rooms, drawn small enough for the corner it lives in. */}
+            <rect
+              x="7"
+              y="6"
+              width="16"
+              height="20"
+              rx="2"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+            />
+            <path d="M11 12h8M11 17h8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+          </svg>
+        </Tappable>
+      )}
     </div>
   )
 }

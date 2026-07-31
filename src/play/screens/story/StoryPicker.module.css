@@ -1,0 +1,71 @@
+/* Same "pick a colour" backdrop as `TypeRoomIndex`'s — the picker is Explore's front door,
+   told with Story mode's own colour instead of a sixteenth type. */
+.picker {
+  box-sizing: border-box;
+  height: 100%;
+  padding: calc(var(--play-gap) + var(--play-target) * 0.72) var(--play-gap) var(--play-gap);
+  background: radial-gradient(circle at 50% 0%, var(--color-primary), var(--color-accent) 85%);
+}
+
+/* One tile per story, one screenful — the same three-equal-tiles shape `PlayHome` uses for the
+   mode switcher, because a picker with three or four stories is the same kind of choice. */
+.tiles {
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--play-gap);
+}
+
+@media (orientation: portrait) {
+  .tiles {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3, 1fr);
+  }
+}
+
+.tile {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  --tap-min: 0;
+  padding: clamp(6px, 1.4vmin, 16px);
+  border-radius: var(--play-radius);
+  background: var(--play-surface);
+  box-shadow: 0 0.6vmin 1.8vmin rgba(0, 0, 0, 0.36);
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: clamp(4px, 1vmin, 12px);
+  overflow: hidden;
+}
+
+/* The story's own opening backdrop, cropped into the tile — a picture of the walk rather than
+   a symbol standing in for it. */
+.preview {
+  position: relative;
+  min-height: 0;
+  border-radius: clamp(10px, 1.8vmin, 18px);
+  overflow: hidden;
+}
+
+/* Sized and positioned entirely by this tile, not by `Protagonist`'s own class — see the
+   component note on why. */
+.protagonist {
+  position: absolute;
+  left: 6%;
+  bottom: 4%;
+  height: 42%;
+  width: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0.3vmin 0.9vmin rgba(0, 0, 0, 0.4));
+}
+
+.label {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(0.8rem, 2.4vmin, 1.35rem);
+  line-height: 1.15;
+  letter-spacing: 0.03em;
+  text-align: center;
+  color: var(--play-ink);
+}

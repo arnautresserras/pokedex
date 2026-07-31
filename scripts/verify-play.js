@@ -136,9 +136,16 @@ async function checkStories() {
           fail(`${where} choice icon "${choice.icon}" has no label in ${story.lang}`)
         }
       }
+      // An encounter's `next` is the doorway to its branch's own closing scene (see route1.js) —
+      // same reachability contract as a choice's `next`, just not offered as a tap the child
+      // makes themselves.
+      if (scene.type === 'encounter' && scene.next) {
+        if (!scenes[scene.next]) fail(`${where} next → unknown scene "${scene.next}"`)
+        else reached.add(scene.next)
+      }
       const terminal = !(scene.choices ?? []).length
-      if (terminal && scene.type !== 'encounter') {
-        fail(`${where} is a dead end but is not an encounter`)
+      if (terminal && scene.type !== 'encounter' && scene.type !== 'ending') {
+        fail(`${where} is a dead end but is not an encounter or an ending`)
       }
       /**
        * An encounter's pool is a place, and a place that resolves to nobody ends the story on

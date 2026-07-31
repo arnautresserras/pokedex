@@ -70,6 +70,102 @@ const BACKDROPS = {
     leaves: ['#C9822F', '#A2611F', '#D9A34A', '#7C5320', '#B4702A'],
     motes: 4,
   },
+
+  // "El camí de Pallet" (route1.js) — the same three shapes, a brighter and more open palette:
+  // roadside hedges instead of deep forest, sun that actually reaches the ground.
+  'pallet-road': {
+    shape: 'forest',
+    sky: ['#FFEFC2', '#CFEFAE'],
+    trees: ['#8FC168', '#5FA24C', '#357238'],
+    floor: '#5B4A2E',
+    trail: '#C9A868',
+    sun: { cx: 50, cy: 14, r: 9 },
+    motes: 5,
+  },
+
+  'bright-meadow': {
+    shape: 'forest',
+    sky: ['#FFF6C9', '#DCEFAA'],
+    trees: ['#9BCB6E', '#6FAE56', '#3F7A3E'],
+    floor: '#4B3E27',
+    trail: '#D8B878',
+    sun: { cx: 60, cy: 10, r: 10 },
+    shafts: true,
+    motes: 8,
+  },
+
+  'shaded-hedge': {
+    shape: 'forest',
+    sky: ['#DCE9C0', '#A9C98C'],
+    trees: ['#6E9E52', '#4A7742', '#2A4A2C'],
+    floor: '#3A2F1E',
+    trail: '#9C8256',
+    // No sun: a hedgerow's shade, not a thicket's gloom — the sky stays green, not grey.
+    motes: 3,
+  },
+
+  'hedge-canopy': {
+    shape: 'canopy',
+    sky: ['#EAF7FF', '#BFE3FF'],
+    trees: ['#8FC168', '#5FA24C', '#3F7A3E'],
+    motes: 6,
+  },
+
+  'tall-grass': {
+    shape: 'floor',
+    sky: ['#4C6B41', '#22331F'],
+    floor: '#4B3E27',
+    leaves: ['#8FA84A', '#6E9138', '#B7C465', '#5C7A2E', '#9CB050'],
+    motes: 3,
+  },
+
+  // "El prat espurnejant" (pikafield.js) — the scrubland outside the Power Plant fence, told
+  // as an overcast, storm-tinted field rather than a forest.
+  'fence-morning': {
+    shape: 'forest',
+    sky: ['#FCEFD8', '#D7E3EE'],
+    trees: ['#A7B978', '#7C9052', '#54692F'],
+    floor: '#5A4E36',
+    trail: '#B7A26B',
+    sun: { cx: 46, cy: 15, r: 7 },
+    motes: 4,
+  },
+
+  'field-bright': {
+    shape: 'forest',
+    sky: ['#FFF8D0', '#CFE0EF'],
+    trees: ['#B7C67E', '#8CA45A', '#5E7A34'],
+    floor: '#4E4530',
+    trail: '#C6AE76',
+    sun: { cx: 58, cy: 11, r: 9 },
+    shafts: true,
+    motes: 7,
+  },
+
+  'field-dusk': {
+    shape: 'forest',
+    sky: ['#3A4A5E', '#232F3D'],
+    trees: ['#5A6B45', '#3E4C31', '#26301E'],
+    floor: '#232019',
+    trail: '#3B3527',
+    // No sun: the storm has already swallowed it.
+    motes: 3,
+  },
+
+  'storm-gap': {
+    shape: 'canopy',
+    sky: ['#EAF0FF', '#B9C7F2'],
+    trees: ['#8894C4', '#5C6BA0', '#3B4676'],
+    motes: 8,
+  },
+
+  'dry-litter': {
+    shape: 'floor',
+    sky: ['#3A4A2E', '#1C2318'],
+    floor: '#3A3324',
+    leaves: ['#C9B24A', '#A68A2E', '#E0CD6A', '#8C7328', '#B49A3E'],
+    motes: 4,
+  },
 }
 
 /** Fixed drift positions. Dust in a sunbeam in the forest, spores under the leaves. */

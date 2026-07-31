@@ -15,10 +15,15 @@ import styles from './Encounter.module.css'
  *
  * The Pokémon is drawn from the scene's pool, which is a *place* (see `utils/encounters.js`),
  * so the forest's cast is whoever Gen I says lives in the forest. Seven residents, and the tap
- * on the art meets the next one — which is the mode's replay loop and the reason nothing here
- * ends the story: the child who has just met a Kakuna wants to know who else is under there,
- * and that's one tap, not a re-read. Going back to the beginning is the parent's control, in
- * the corner, because choosing to hear the story again is a parent's decision.
+ * on the art meets the next one — the forest's replay loop, and the reason nothing there ends
+ * the story: the child who has just met a Kakuna wants to know who else is under there, and
+ * that's one tap, not a re-read. Going back to the beginning is the parent's control, in the
+ * corner, because choosing to hear the story again is a parent's decision.
+ *
+ * That loop is the forest's choice, not this component's: `onAnother` is whatever `Story.jsx`
+ * decides a tap here should do, and a story whose scene names a `next` (route1, pikafield) gets
+ * a real closing scene out of the same tap instead of another resident. `Encounter` doesn't
+ * know which is happening, which is exactly what keeps the ending story-specific.
  *
  * Tap-the-art-to-advance is lifted deliberately from Game's reveal. Same grammar, same corner
  * for the arrow, same reason: a child handed a Pokémon taps the Pokémon, so the art has to be

@@ -9,6 +9,13 @@ const BASE = '/pokedex/'
 
 export default defineConfig({
   base: BASE,
+  // Binds the dev server to IPv4 loopback explicitly. Without this, `localhost` resolves to
+  // both `::1` and `127.0.0.1`, and Windows silently drops the IPv6 attempt instead of
+  // refusing it — so the browser stalls out a multi-second timeout before falling back to
+  // IPv4 on every fresh socket. Doesn't touch the production build; GitHub Pages serves the
+  // static output, this only affects `npm run dev`/`preview`.
+  server: { host: '127.0.0.1' },
+  preview: { host: '127.0.0.1' },
   plugins: [
     react(),
     VitePWA({

@@ -166,9 +166,58 @@ function Leaves({ className }) {
   )
 }
 
+/** A break in low storm clouds, a spark of lightning dropping out of it. */
+function CloudGap({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 100 100" aria-hidden="true">
+      <rect width="100" height="100" fill="#2E3B52" />
+      <rect y="0" width="100" height="58" fill="#3B4C6B" />
+      {/* The gap: a pale break in the clouds, where the light gets through. */}
+      <ellipse cx="50" cy="30" rx="26" ry="16" fill="#DCE8F7" opacity="0.9" />
+      <ellipse cx="50" cy="30" rx="15" ry="9" fill="#F3F8FF" />
+      <g fill="#232E42">
+        <ellipse cx="8" cy="18" rx="20" ry="12" />
+        <ellipse cx="92" cy="14" rx="22" ry="13" />
+        <ellipse cx="20" cy="44" rx="16" ry="10" />
+        <ellipse cx="80" cy="42" rx="17" ry="10" />
+      </g>
+      <rect y="58" width="100" height="42" fill="#1C2333" />
+      {/* The spark, dropping out of the gap towards the ground. */}
+      <polygon points="52,40 44,60 51,60 45,86 63,54 54,54 59,40" fill="#FFD94E" />
+    </svg>
+  )
+}
+
+/** Dry grass with a current running along the ground beneath it. */
+function GrassRipple({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 100 100" aria-hidden="true">
+      <rect width="100" height="100" fill="#DCC77E" />
+      <rect y="46" width="100" height="54" fill="#C7A94E" />
+      <g fill="#8C9A3E">
+        <path d="M10 100 L14 58 L18 100 Z" />
+        <path d="M26 100 L31 50 L36 100 Z" />
+        <path d="M46 100 L50 46 L55 100 Z" />
+        <path d="M66 100 L70 52 L76 100 Z" />
+        <path d="M84 100 L89 58 L94 100 Z" />
+      </g>
+      {/* The current, running along the ground under the blades. */}
+      <polyline
+        points="4,74 24,66 40,78 58,64 76,76 96,68"
+        fill="none"
+        stroke="#FFE35A"
+        strokeWidth="4"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
 const ICONS = {
   'sunny-path': SunnyPath,
   'dark-path': DarkPath,
   branch: Branch,
   leaves: Leaves,
+  'cloud-gap': CloudGap,
+  'grass-ripple': GrassRipple,
 }
