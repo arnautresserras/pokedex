@@ -1,4 +1,4 @@
-import { pokemonTypes } from './playColors'
+import { GEN_I_TYPES, pokemonTypes } from './playColors'
 import { pokemonTraits } from './traits'
 
 /**
@@ -122,4 +122,22 @@ export function buildRound(roster, { recent = [] } = {}) {
   }
 
   return { answer, options: shuffled([answer, ...distractors]) }
+}
+
+/**
+ * One round of "Quin color?" — a Pokémon plus two distractor types, alongside its own primary
+ * type. Same pool-and-exclude shape as `buildRound`, but the options are types rather than
+ * Pokémon: this activity drills the type-to-colour link Explore's rooms already teach, not
+ * silhouette recognition, so mixing it into Game gives the child a second way to play with the
+ * thing she already gravitates to.
+ */
+export function buildTypeRound(roster, { recent = [] } = {}) {
+  const excluded = new Set(recent)
+  const pool = roster.filter(pokemon => !excluded.has(pokemon.id))
+  const answer = shuffled(pool.length ? pool : roster)[0]
+  const answerType = pokemonTypes(answer)[0]
+
+  const distractors = shuffled(GEN_I_TYPES.filter(t => t !== answerType)).slice(0, OPTIONS - 1)
+
+  return { answer, options: shuffled([answerType, ...distractors]) }
 }

@@ -1,0 +1,28 @@
+.stage {
+  composes: stage from './SilhouetteStage.module.css';
+}
+
+.name {
+  composes: name from './SilhouetteStage.module.css';
+}
+
+.celebrate {
+  composes: celebrate from './SilhouetteStage.module.css';
+}
+
+.artTap {
+  composes: artTap from './SilhouetteStage.module.css';
+}
+
+.next {
+  composes: next from './SilhouetteStage.module.css';
+}
+
+/* Unlike `SilhouetteStage`, there is no black-silhouette state to fade out of: the colour *is*
+   the question here, so the art is drawn in full colour from the first frame. */
+.art {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 1.4vmin 3vmin rgba(0, 0, 0, 0.5));
+}

@@ -96,6 +96,10 @@
   gap: clamp(5px, 1.2vmin, 12px);
 }
 
+.lore {
+  margin-top: clamp(2px, 0.8vmin, 8px);
+}
+
 .traits {
   margin-top: clamp(2px, 0.8vmin, 8px);
 }

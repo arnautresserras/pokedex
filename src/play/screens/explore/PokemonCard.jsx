@@ -7,18 +7,23 @@ import { pokemonTypes, typeCssVars } from '../../utils/playColors'
 import { artUrl } from '../../utils/playAssets'
 import TraitMeters from './TraitMeters'
 import EvolutionStrip from './EvolutionStrip'
+import PokemonLore from './PokemonLore'
 import styles from './PokemonCard.module.css'
 
 /**
  * One Pokémon, full screen. The end of every path through Explore and the thing the whole
- * mode exists to show, so it holds exactly four things and no vitals list:
+ * mode exists to show:
  *
  *   the art, as big as the screen allows · the name, as text only · its type badges ·
- *   three "what it's like" meters · the evolution row
+ *   the GameBoy flavor text · three "what it's like" meters · the evolution row
  *
  * **The name is displayed and never spoken** — that's the spec's line, and with the app silent
  * by design it's also the only option. It's set large because the parent reads it aloud and
  * because its shape is the thing a pre-reader will eventually recognise.
+ *
+ * The flavor text (`PokemonLore`) is the one block on the card that isn't for the child at
+ * all — it's material for the parent to read aloud while looking at the same screen, not a
+ * vitals list, so it stays a single short paragraph rather than growing into a spec sheet.
  *
  * The card takes its colour from the **Pokémon's own primary type**, not from the room it was
  * reached through and not from Explore's blue. Walking from Eevee to Vaporeon should turn the
@@ -79,6 +84,8 @@ export default function PokemonCard() {
             <PlayTypeBadge key={t} type={t} />
           ))}
         </div>
+
+        <PokemonLore flavorTexts={pokemon.flavorTexts} className={styles.lore} />
 
         <TraitMeters roster={roster} pokemon={pokemon} className={styles.traits} />
 
