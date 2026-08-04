@@ -16,6 +16,20 @@
   display: block;
 }
 
+/* A Tiled-authored tilemap export instead of a drawn shape. Cropped to fill and anchored to
+   the bottom, same as the SVG shapes' `yMax` pin, so the ground stays put. `pixelated` keeps
+   the tile art crisp at arbitrary scale rather than letting the browser's default smoothing
+   blur it into a soft, unintentional-looking mush. */
+.sceneImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+  image-rendering: pixelated;
+}
+
 .motes,
 .vignette {
   position: absolute;

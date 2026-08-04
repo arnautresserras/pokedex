@@ -1,4 +1,5 @@
 import styles from './Backdrop.module.css'
+import { sceneUrl } from '../../utils/playAssets.js'
 
 /**
  * A scene's place, as a CSS gradient plus one inline SVG.
@@ -199,6 +200,15 @@ export default function Backdrop({ id, className = '' }) {
         {scene.shape === 'canopy' && <CanopyShape {...scene} />}
         {scene.shape === 'floor' && <FloorShape {...scene} />}
       </svg>
+
+      {scene.shape === 'image' && (
+        <img
+          className={styles.sceneImage}
+          src={sceneUrl(scene.src)}
+          alt=""
+          draggable="false"
+        />
+      )}
 
       <div className={styles.motes}>
         {MOTES.slice(0, scene.motes ?? 0).map((mote, i) => (

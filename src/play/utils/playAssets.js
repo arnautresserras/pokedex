@@ -21,3 +21,8 @@ export function spriteUrl(id) {
 export function backSpriteUrl(id) {
   return `${BASE}pkmn/back/${id}.png`
 }
+
+/** A story backdrop authored as a tilemap export, rather than drawn as an SVG shape. */
+export function sceneUrl(id) {
+  return `${BASE}scenes/${id}.png`
+}
