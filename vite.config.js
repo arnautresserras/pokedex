@@ -26,7 +26,14 @@ export default defineConfig({
       // the next cold launch, which for a home-screen app is the next time it's opened. Nothing
       // to tap, nothing interrupted.
       registerType: 'prompt',
-      injectRegister: 'script',
+      // Not 'script': the plugin's auto-injected registerSW.js only calls register() once on
+      // load, and browsers throttle their own internal update check to roughly once every 24
+      // hours per registration — so a session of rapid same-day testing can go a full day
+      // without the app ever noticing a new deploy, which looks identical to updates being
+      // broken outright. src/registerServiceWorker.js calls registration.update() explicitly
+      // on every foreground, bypassing that throttle. Still never skipWaiting — the new worker
+      // only takes over once the old one's clients are gone, same as before.
+      injectRegister: false,
       manifest: {
         id: BASE,
         name: 'Pokédex Kanto',
