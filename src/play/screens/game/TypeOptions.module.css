@@ -19,19 +19,10 @@
   min-height: 0;
   flex: 0 1 clamp(96px, 25vmin, 260px);
   aspect-ratio: 1;
-  /* Same padding and gap as `AnswerOptions`' cell, not the larger values this had before: this
-     is the one tile in Game painted with a *gradient* rather than a flat colour, and giving its
-     rounded corner + `overflow: hidden` less breathing room to guess at than the proven-safe
-     construction seemed the wrong place to also be more generous. */
   padding: clamp(4px, 1vmin, 12px);
   border-radius: clamp(16px, 2.8vmin, 26px);
   background: linear-gradient(158deg, var(--tile-primary), var(--tile-light) 140%);
   box-shadow: 0 0.5vmin 1.6vmin rgba(0, 0, 0, 0.35);
-  /* A hint to composite this element on its own layer from the first paint rather than
-     promoting it later — the fix for a known iOS Safari bug where `border-radius` +
-     `overflow: hidden` fails to clip a gradient-backed box, letting its content (here, the
-     type name) render past the rounded corner instead of being cut off by it. */
-  transform: translateZ(0);
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
   place-items: center;
@@ -52,15 +43,22 @@
   filter: drop-shadow(0 0.3vmin 0.9vmin rgba(0, 0, 0, 0.35));
 }
 
+/* Not the inherited white `.option` text: the gradient runs from the type's saturated primary
+   into its pale `light` shade, and by the bottom row — where the name sits — the background is
+   close enough to white that white text disappears into it. `--tile-accent` is always a dark
+   shade of the same colour, so the name stays legible regardless of where on the gradient it
+   lands, without needing to fight the gradient itself. */
 .name {
   max-width: 100%;
   font-family: var(--font-display);
   font-weight: 900;
   font-size: clamp(0.6rem, 1.8vmin, 1.05rem);
-  line-height: 1.1;
+  /* Not 1.1 — see `TypeRoom.module.css`'s note on why this specific font needs more headroom
+     than that in the row that sizes to it, on iPad Safari specifically. */
+  line-height: 1.3;
   letter-spacing: 0.03em;
   text-transform: uppercase;
-  text-shadow: 0 0.2vmin 0.7vmin rgba(0, 0, 0, 0.45);
+  color: var(--tile-accent);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

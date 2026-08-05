@@ -20,7 +20,7 @@ export default function TypeOptions({ options, answerType, picked, onPick, class
         if (!room) return null
 
         const isAnswer = type === answerType
-        const { primary, light } = getPlayTypeColors(type)
+        const { primary, light, accent } = getPlayTypeColors(type)
         const classes = [
           styles.option,
           revealed && isAnswer ? styles.correct : '',
@@ -34,7 +34,7 @@ export default function TypeOptions({ options, answerType, picked, onPick, class
           <Tappable
             key={type}
             className={classes}
-            style={{ '--tile-primary': primary, '--tile-light': light }}
+            style={{ '--tile-primary': primary, '--tile-light': light, '--tile-accent': accent }}
             disabled={revealed}
             onTap={() => onPick(type)}
             aria-label={room.label}
