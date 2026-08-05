@@ -63,7 +63,12 @@
     0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* Not `center`: a centred flex column that overflows has no safe way back to its own top on
+     iPad Safari — the scrollport's natural resting position is `0`, but centring pushes the
+     first child (the name) into the *negative* scroll range, which WebKit doesn't offer a
+     gesture to reach. `flex-start` means the name is always the first thing in view, however
+     much the lore panel below it grows the column past one screenful. */
+  justify-content: flex-start;
   gap: clamp(8px, 2vmin, 22px);
   /* Never expected to engage at iPad sizes — a safety net so a short viewport clips nothing. */
   overflow-y: auto;
@@ -73,7 +78,6 @@
 @media (orientation: portrait) {
   .info {
     padding: 0 var(--play-gap) var(--play-gap);
-    justify-content: flex-start;
   }
 }
 

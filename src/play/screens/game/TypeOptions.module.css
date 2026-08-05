@@ -15,16 +15,27 @@
 .option {
   position: relative;
   box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
   flex: 0 1 clamp(96px, 25vmin, 260px);
   aspect-ratio: 1;
-  padding: clamp(10px, 2vmin, 20px);
+  /* Same padding and gap as `AnswerOptions`' cell, not the larger values this had before: this
+     is the one tile in Game painted with a *gradient* rather than a flat colour, and giving its
+     rounded corner + `overflow: hidden` less breathing room to guess at than the proven-safe
+     construction seemed the wrong place to also be more generous. */
+  padding: clamp(4px, 1vmin, 12px);
   border-radius: clamp(16px, 2.8vmin, 26px);
   background: linear-gradient(158deg, var(--tile-primary), var(--tile-light) 140%);
   box-shadow: 0 0.5vmin 1.6vmin rgba(0, 0, 0, 0.35);
+  /* A hint to composite this element on its own layer from the first paint rather than
+     promoting it later — the fix for a known iOS Safari bug where `border-radius` +
+     `overflow: hidden` fails to clip a gradient-backed box, letting its content (here, the
+     type name) render past the rounded corner instead of being cut off by it. */
+  transform: translateZ(0);
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
   place-items: center;
-  gap: clamp(2px, 0.8vmin, 8px);
+  gap: 2px;
   overflow: hidden;
   color: #fff;
   transition:

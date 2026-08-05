@@ -23,15 +23,15 @@
    by giving `Celebrate`'s child an intrinsic size instead of a percentage of its parent. */
 .grid {
   display: grid;
-  grid-template-columns: repeat(4, clamp(64px, 15vmin, 160px));
-  grid-template-rows: repeat(3, clamp(64px, 15vmin, 160px));
-  gap: clamp(6px, 1.4vmin, 16px);
+  grid-template-columns: repeat(4, clamp(90px, 22vmin, 230px));
+  grid-template-rows: repeat(3, clamp(90px, 22vmin, 230px));
+  gap: clamp(8px, 1.8vmin, 20px);
 }
 
 @media (orientation: portrait) {
   .grid {
-    grid-template-columns: repeat(3, clamp(64px, 18vmin, 160px));
-    grid-template-rows: repeat(4, clamp(64px, 18vmin, 160px));
+    grid-template-columns: repeat(3, clamp(90px, 25vmin, 230px));
+    grid-template-rows: repeat(4, clamp(90px, 25vmin, 230px));
   }
 }
 
