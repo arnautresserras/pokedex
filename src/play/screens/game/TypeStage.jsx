@@ -14,6 +14,10 @@ import styles from './TypeStage.module.css'
  * about recognising a colour, and the colour is the whole question, so hiding it would hide the
  * thing being asked about. Only the *name* stays behind the reveal, same as everywhere else in
  * Game.
+ *
+ * `FamilyGame` reuses this component as-is for its prompt: "show a Pokémon in full colour, name
+ * hidden until revealed" is exactly what "who does this belong with?" needs too, so that
+ * activity adds no stage of its own.
  */
 export default function TypeStage({ pokemon, revealed, onNext }) {
   const [primaryType] = pokemonTypes(pokemon)

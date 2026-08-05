@@ -1,0 +1,167 @@
+.stage {
+  position: relative;
+  box-sizing: border-box;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  /* Top inset clears the home button's corner, same as the other stages. */
+  padding: calc(var(--play-gap) + var(--play-target) * 0.35) var(--play-gap) var(--play-gap);
+}
+
+/* The reward glow, hidden until the sequence is complete — same trick `SilhouetteStage` uses,
+   just triggered by finishing the puzzle instead of a single tap. */
+.stage::before {
+  content: '';
+  position: absolute;
+  inset: 8% 14% 34%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--color-primary), transparent 66%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--motion-base) var(--ease-out);
+}
+
+.stage[data-done]::before {
+  opacity: 0.4;
+}
+
+.celebrate {
+  width: 100%;
+  min-height: 0;
+}
+
+.slots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: clamp(4px, 1vmin, 10px);
+}
+
+.slotWrap {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 1vmin, 10px);
+}
+
+.arrow {
+  display: grid;
+  place-items: center;
+  color: var(--play-ink-dim);
+}
+
+.arrow svg {
+  width: clamp(16px, 3vmin, 28px);
+  height: clamp(16px, 3vmin, 28px);
+}
+
+.slot {
+  box-sizing: border-box;
+  width: clamp(76px, 19vmin, 190px);
+  aspect-ratio: 1;
+  border-radius: clamp(14px, 2.4vmin, 22px);
+  background: var(--color-light);
+  box-shadow: 0 0.5vmin 1.6vmin rgba(0, 0, 0, 0.3);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  transition:
+    transform var(--motion-base) var(--ease-pop),
+    box-shadow var(--motion-base) var(--ease-out);
+}
+
+.slot[data-filled] {
+  box-shadow:
+    0 0 0 clamp(3px, 0.6vmin, 6px) var(--color-primary),
+    0 0.6vmin 1.8vmin rgba(0, 0, 0, 0.35);
+  transform: scale(1.03);
+}
+
+.slotArt {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 8%;
+  box-sizing: border-box;
+}
+
+.slotNumber {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(1.3rem, 4vmin, 2.6rem);
+  color: var(--play-ink-dim);
+}
+
+.tiles {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: var(--play-gap);
+  padding: var(--play-gap);
+}
+
+.tile {
+  position: relative;
+  box-sizing: border-box;
+  flex: 0 1 clamp(96px, 25vmin, 220px);
+  aspect-ratio: 1;
+  padding: clamp(4px, 1vmin, 12px);
+  border-radius: clamp(16px, 2.8vmin, 26px);
+  background: var(--color-light);
+  box-shadow: 0 0.5vmin 1.6vmin rgba(0, 0, 0, 0.35);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  transition:
+    transform var(--motion-base) var(--ease-pop),
+    opacity var(--motion-base) var(--ease-out),
+    filter var(--motion-base) var(--ease-out);
+}
+
+.tileArt {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Already placed in a slot: quietly out of the way, same "faded, not punished" language as
+   `AnswerOptions`' wrong-tap state — this isn't wrong, it's just done. */
+.placed {
+  opacity: 0.32;
+  filter: saturate(0.5);
+  transform: scale(0.92);
+}
+
+.next {
+  position: absolute;
+  right: var(--play-gap);
+  bottom: var(--play-gap);
+  width: var(--play-target);
+  height: var(--play-target);
+  border-radius: 50%;
+  filter: drop-shadow(0 0.4vmin 1.2vmin rgba(0, 0, 0, 0.45));
+  animation: nextIn var(--motion-base) var(--ease-pop) both;
+}
+
+.next svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes nextIn {
+  from { opacity: 0; transform: scale(0.7); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage::before,
+  .slot,
+  .tile,
+  .next {
+    animation: none;
+    transition: none;
+  }
+}

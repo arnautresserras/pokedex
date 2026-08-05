@@ -1,0 +1,68 @@
+.picker {
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 1.4vmin, 12px);
+}
+
+/* Same size as Story's ParentControls control — a setting for the adult, not a fourth thing
+   for a child to go tap. */
+.toggle {
+  --tap-min: 0;
+  width: clamp(30px, 4.6vmin, 44px);
+  height: clamp(30px, 4.6vmin, 44px);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(10, 14, 11, 0.42);
+  color: var(--play-ink);
+  opacity: 0.62;
+}
+
+.toggle svg {
+  display: block;
+  width: 62%;
+  height: 62%;
+}
+
+.tray {
+  display: flex;
+  align-items: center;
+  gap: clamp(5px, 1.1vmin, 10px);
+  padding: clamp(4px, 1vmin, 8px);
+  border-radius: clamp(16px, 3vmin, 24px);
+  background: rgba(10, 14, 11, 0.5);
+  animation: trayIn var(--motion-base) var(--ease-pop) both;
+}
+
+.trayButton {
+  --tap-min: 0;
+  width: clamp(28px, 4.2vmin, 40px);
+  height: clamp(28px, 4.2vmin, 40px);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--play-ink);
+}
+
+.trayButton svg {
+  display: block;
+  width: 62%;
+  height: 62%;
+}
+
+.current {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+@keyframes trayIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tray {
+    animation: none;
+  }
+}

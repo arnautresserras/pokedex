@@ -1,5 +1,6 @@
 import { GEN_I_TYPES, pokemonTypes } from './playColors'
 import { pokemonTraits } from './traits'
+import { evolutionStages } from './evolution'
 
 /**
  * One round of "Who's that Pokémon?" — an answer plus two distractors.
@@ -108,7 +109,10 @@ function pickDistractors(roster, answer, rules) {
  *
  * `recent` is the last few answers, excluded from being picked again: the pool is 151 deep, but
  * random with replacement repeats often enough that a child would notice, and a repeat right
- * after a reveal makes the game look broken rather than random.
+ * after a reveal makes the game look broken rather than random. `recentIds` on the return value
+ * is what `Game` folds into that list — every `build*Round` function returns one, so `Game`
+ * never has to know which fields a particular round shape uses to identify "what was just
+ * asked".
  */
 export function buildRound(roster, { recent = [] } = {}) {
   const excluded = new Set(recent)
@@ -121,7 +125,7 @@ export function buildRound(roster, { recent = [] } = {}) {
     if (distractors.length === OPTIONS - 1) break
   }
 
-  return { answer, options: shuffled([answer, ...distractors]) }
+  return { answer, options: shuffled([answer, ...distractors]), recentIds: [answer.id] }
 }
 
 /**
@@ -139,5 +143,118 @@ export function buildTypeRound(roster, { recent = [] } = {}) {
 
   const distractors = shuffled(GEN_I_TYPES.filter(t => t !== answerType)).slice(0, OPTIONS - 1)
 
-  return { answer, options: shuffled([answerType, ...distractors]) }
+  return { answer, options: shuffled([answerType, ...distractors]), recentIds: [answer.id] }
+}
+
+/**
+ * Groups the roster by family key, keeping only families with more than one Gen I member —
+ * the shape both `buildFamilyRound` and `buildEvolutionRound` start from, since both need "a
+ * chain with something to say about it" rather than any single Pokémon.
+ */
+function familiesWithMembers(roster) {
+  const keys = familyKeys(roster)
+  const byFamily = new Map()
+  for (const pokemon of roster) {
+    const key = keys.get(pokemon.id)
+    if (!byFamily.has(key)) byFamily.set(key, [])
+    byFamily.get(key).push(pokemon)
+  }
+  return [...byFamily.values()].filter(members => members.length > 1)
+}
+
+/**
+ * One round of "Qui és de la família?" — a Pokémon (`prompt`) plus three options, one of which
+ * (`answer`) shares its evolution family. The distractors reuse `buildRound`'s exact ladder and
+ * `pickDistractors`: every rung requires `family: true`, so a distractor can never come from
+ * the prompt's own family without any extra bookkeeping here.
+ *
+ * `prompt` and `answer` are deliberately two different members of the family rather than the
+ * same Pokémon twice — the question is "who belongs with this one", and asking a child to pick
+ * the picture already on screen wouldn't be a question at all.
+ */
+export function buildFamilyRound(roster, { recent = [] } = {}) {
+  const excluded = new Set(recent)
+  const families = familiesWithMembers(roster)
+
+  const available = families.filter(members => !members.every(m => excluded.has(m.id)))
+  const members = shuffled(available.length ? available : families)[0]
+  const [prompt, answer] = shuffled(members).slice(0, 2)
+
+  let distractors = []
+  for (const rules of LADDER) {
+    distractors = pickDistractors(roster, answer, rules)
+    if (distractors.length === OPTIONS - 1) break
+  }
+
+  return {
+    prompt,
+    answer,
+    options: shuffled([answer, ...distractors]),
+    recentIds: [prompt.id, answer.id],
+  }
+}
+
+/** Chains this short and this simple (no branch, Gen I only) — see `evolutionOrderChains`. */
+const ORDER_MIN_STAGES = 2
+const ORDER_MAX_STAGES = 3
+
+/**
+ * Every family whose chain is a plain, unbranched line of 2–3 Gen I stages — the shape
+ * `buildEvolutionRound` needs. Eevee is the one branching chain in the cache and is excluded
+ * here rather than handled: "put these in order" has one right answer only when there's one
+ * chain, and a branch means more than one Pokémon could legitimately come next.
+ */
+function evolutionOrderChains(roster) {
+  const chains = []
+  for (const members of familiesWithMembers(roster)) {
+    const stages = evolutionStages(roster, members[0])
+    if (stages.length < ORDER_MIN_STAGES || stages.length > ORDER_MAX_STAGES) continue
+    if (stages.some(stage => stage.length > 1)) continue
+    chains.push(stages.map(stage => stage[0]))
+  }
+  return chains
+}
+
+/**
+ * One round of "Ordena l'evolució" — a chain's stages, shuffled for display in `order`, with
+ * the correct sequence kept separately in `sequence` for the component to check taps against.
+ * `EvolutionOrderGame` owns all of the actual tap-by-tap state; this only has to hand it a fair
+ * chain to work with.
+ */
+export function buildEvolutionRound(roster, { recent = [] } = {}) {
+  const excluded = new Set(recent)
+  const chains = evolutionOrderChains(roster)
+
+  const available = chains.filter(sequence => !sequence.every(p => excluded.has(p.id)))
+  const sequence = shuffled(available.length ? available : chains)[0]
+
+  return {
+    sequence,
+    order: shuffled(sequence),
+    recentIds: sequence.map(p => p.id),
+  }
+}
+
+/** Pairs on the board — six is a full round without turning into a search. */
+const MEMORY_PAIRS = 6
+
+/**
+ * One round of "Memory" — `MEMORY_PAIRS` Pokémon, each as two face-down cards, shuffled into
+ * one grid. The skill here isn't identification (both cards of a pair are the same artwork) —
+ * it's remembering *where* things are, so distinctness rules don't apply the way they do
+ * elsewhere in this file: any six Pokémon make a fair board.
+ */
+export function buildMemoryRound(roster, { recent = [] } = {}) {
+  const excluded = new Set(recent)
+  const pool = shuffled(roster).filter(pokemon => !excluded.has(pokemon.id))
+  const chosen = (pool.length >= MEMORY_PAIRS ? pool : shuffled(roster)).slice(0, MEMORY_PAIRS)
+
+  const cards = shuffled(
+    chosen.flatMap(pokemon => [
+      { key: `${pokemon.id}-a`, pokemon },
+      { key: `${pokemon.id}-b`, pokemon },
+    ]),
+  )
+
+  return { cards, recentIds: chosen.map(p => p.id) }
 }
