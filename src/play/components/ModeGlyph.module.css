@@ -33,10 +33,10 @@
   bottom: 4%;
   font-family: var(--font-display);
   font-weight: 900;
-  /* vmin, not a percentage: percentages resolve against the inherited font size, which has
+  /* dvmin, not a percentage: percentages resolve against the inherited font size, which has
      nothing to do with how big the tile is. */
-  font-size: clamp(1.8rem, 8vmin, 5rem);
+  font-size: clamp(1.8rem, 8dvmin, 5rem);
   line-height: 0.8;
   color: var(--play-ink);
-  text-shadow: 0 0.4vmin 1.2vmin rgba(0, 0, 0, 0.45);
+  text-shadow: 0 0.4dvmin 1.2dvmin rgba(0, 0, 0, 0.45);
 }

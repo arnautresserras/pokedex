@@ -21,17 +21,17 @@
   position: relative;
   box-sizing: border-box;
   flex: 0 0 auto;
-  width: clamp(104px, 24vmin, 240px);
+  width: clamp(104px, 24dvmin, 240px);
   aspect-ratio: 1;
-  border-radius: clamp(16px, 2.8vmin, 26px);
+  border-radius: clamp(16px, 2.8dvmin, 26px);
   /* The picture is full-bleed, so the tile is what rounds and crops it — nothing in
      `ChoiceGlyph` has corners of its own. */
   overflow: hidden;
   /* Mode colour as a rim rather than a fill: the tile's inside is a window into the forest, and
      a violet wash over it would make the sunny path and the dark path look the same. */
   box-shadow:
-    0 0 0 clamp(3px, 0.6vmin, 6px) var(--color-primary),
-    0 0.8vmin 2.4vmin rgba(0, 0, 0, 0.45);
+    0 0 0 clamp(3px, 0.6dvmin, 6px) var(--color-primary),
+    0 0.8dvmin 2.4dvmin rgba(0, 0, 0, 0.45);
   background: var(--color-accent);
 }
 
@@ -47,11 +47,11 @@
   left: 0;
   right: 0;
   bottom: 0;
-  padding: clamp(3px, 0.9vmin, 9px) clamp(4px, 1vmin, 10px);
+  padding: clamp(3px, 0.9dvmin, 9px) clamp(4px, 1dvmin, 10px);
   background: rgba(10, 14, 11, 0.66);
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(0.62rem, 1.9vmin, 1.1rem);
+  font-size: clamp(0.62rem, 1.9dvmin, 1.1rem);
   line-height: 1.1;
   letter-spacing: 0.03em;
   text-transform: uppercase;

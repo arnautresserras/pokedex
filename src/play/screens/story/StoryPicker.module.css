@@ -29,13 +29,13 @@
   height: 100%;
   min-width: 0;
   --tap-min: 0;
-  padding: clamp(6px, 1.4vmin, 16px);
+  padding: clamp(6px, 1.4dvmin, 16px);
   border-radius: var(--play-radius);
   background: var(--play-surface);
-  box-shadow: 0 0.6vmin 1.8vmin rgba(0, 0, 0, 0.36);
+  box-shadow: 0 0.6dvmin 1.8dvmin rgba(0, 0, 0, 0.36);
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
-  gap: clamp(4px, 1vmin, 12px);
+  gap: clamp(4px, 1dvmin, 12px);
   overflow: hidden;
 }
 
@@ -44,7 +44,7 @@
 .preview {
   position: relative;
   min-height: 0;
-  border-radius: clamp(10px, 1.8vmin, 18px);
+  border-radius: clamp(10px, 1.8dvmin, 18px);
   overflow: hidden;
 }
 
@@ -57,13 +57,13 @@
   height: 42%;
   width: auto;
   image-rendering: pixelated;
-  filter: drop-shadow(0 0.3vmin 0.9vmin rgba(0, 0, 0, 0.4));
+  filter: drop-shadow(0 0.3dvmin 0.9dvmin rgba(0, 0, 0, 0.4));
 }
 
 .label {
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: clamp(0.8rem, 2.4vmin, 1.35rem);
+  font-size: clamp(0.8rem, 2.4dvmin, 1.35rem);
   line-height: 1.15;
   letter-spacing: 0.03em;
   text-align: center;

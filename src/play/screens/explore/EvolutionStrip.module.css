@@ -3,18 +3,18 @@
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: clamp(2px, 0.8vmin, 8px);
+  gap: clamp(2px, 0.8dvmin, 8px);
 }
 
 .step {
   display: flex;
   align-items: center;
-  gap: clamp(2px, 0.8vmin, 8px);
+  gap: clamp(2px, 0.8dvmin, 8px);
 }
 
 .arrow {
-  width: clamp(14px, 2.6vmin, 26px);
-  height: clamp(14px, 2.6vmin, 26px);
+  width: clamp(14px, 2.6dvmin, 26px);
+  height: clamp(14px, 2.6dvmin, 26px);
   flex: 0 0 auto;
   color: var(--play-ink-dim);
 }
@@ -33,17 +33,17 @@
 .branch {
   display: flex;
   flex-direction: column;
-  gap: clamp(2px, 0.6vmin, 6px);
+  gap: clamp(2px, 0.6dvmin, 6px);
 }
 
 .stage {
   --tap-min: 0;
-  width: clamp(52px, 9.5vmin, 96px);
-  height: clamp(52px, 9.5vmin, 96px);
-  padding: clamp(2px, 0.6vmin, 6px);
+  width: clamp(52px, 9.5dvmin, 96px);
+  height: clamp(52px, 9.5dvmin, 96px);
+  padding: clamp(2px, 0.6dvmin, 6px);
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.07);
-  box-shadow: inset 0 0 0 0.3vmin rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 0.3dvmin rgba(255, 255, 255, 0.14);
   display: grid;
   place-items: center;
 }
@@ -53,8 +53,8 @@
 .current {
   background: var(--color-light);
   box-shadow:
-    inset 0 0 0 0.4vmin var(--color-primary),
-    0 0 2vmin rgba(0, 0, 0, 0.35);
+    inset 0 0 0 0.4dvmin var(--color-primary),
+    0 0 2dvmin rgba(0, 0, 0, 0.35);
   cursor: default;
 }
 

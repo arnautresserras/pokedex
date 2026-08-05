@@ -35,13 +35,13 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: clamp(1.6rem, 6vmin, 4rem);
+  font-size: clamp(1.6rem, 6dvmin, 4rem);
   line-height: 1;
   letter-spacing: 0.03em;
   text-transform: uppercase;
   text-align: center;
   color: var(--play-ink);
-  text-shadow: 0 0.3vmin 1.4vmin rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0.3dvmin 1.4dvmin rgba(0, 0, 0, 0.5);
 }
 
 .celebrate {
@@ -53,8 +53,8 @@
 /* Sized absolutely, not as a percentage: `Celebrate` centres its child at the child's own
    size, so a percentage would resolve against the 512px source. Same note as the card's hero. */
 .artTap {
-  width: clamp(120px, 40vmin, 460px);
-  height: clamp(120px, 40vmin, 460px);
+  width: clamp(120px, 40dvmin, 460px);
+  height: clamp(120px, 40dvmin, 460px);
   display: grid;
   place-items: center;
 }
@@ -64,11 +64,11 @@
   height: 100%;
   object-fit: contain;
   /* The question. Signal (1) of the reveal is this line switching off. */
-  filter: brightness(0) drop-shadow(0 1vmin 2vmin rgba(0, 0, 0, 0.45));
+  filter: brightness(0) drop-shadow(0 1dvmin 2dvmin rgba(0, 0, 0, 0.45));
 }
 
 .stage[data-revealed] .art {
-  filter: drop-shadow(0 1.4vmin 3vmin rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 1.4dvmin 3dvmin rgba(0, 0, 0, 0.5));
 }
 
 /* Bottom-right of the stage, diagonally opposite the home button and well clear of the
@@ -80,7 +80,7 @@
   width: var(--play-target);
   height: var(--play-target);
   border-radius: 50%;
-  filter: drop-shadow(0 0.4vmin 1.2vmin rgba(0, 0, 0, 0.45));
+  filter: drop-shadow(0 0.4dvmin 1.2dvmin rgba(0, 0, 0, 0.45));
   animation: nextIn var(--motion-base) var(--ease-pop) both;
 }
 

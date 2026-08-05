@@ -36,17 +36,17 @@
   /* Tiles at 1/15th of a screen are below the 88px floor in one axis on portrait; the whole
      tile is the target and it's still far larger than a fingertip. */
   --tap-min: 0;
-  padding: clamp(6px, 1.4vmin, 16px);
-  border-radius: clamp(14px, 2.4vmin, 24px);
+  padding: clamp(6px, 1.4dvmin, 16px);
+  border-radius: clamp(14px, 2.4dvmin, 24px);
   background: linear-gradient(158deg, var(--color-primary), var(--color-accent));
-  box-shadow: 0 0.6vmin 1.8vmin rgba(0, 0, 0, 0.36);
+  box-shadow: 0 0.6dvmin 1.8dvmin rgba(0, 0, 0, 0.36);
   display: grid;
   /* Same `minmax(0, 1fr)` as `TypeRoom`'s cell — see the note there. The tile's height is definite
      here, so the label has room either way, but a glyph that can't be squeezed is a label that
      can't be clipped. */
   grid-template-rows: minmax(0, 1fr) auto;
   place-items: center;
-  gap: clamp(2px, 0.8vmin, 8px);
+  gap: clamp(2px, 0.8dvmin, 8px);
   overflow: hidden;
   color: #fff;
 }
@@ -68,19 +68,19 @@
   width: 100%;
   height: 100%;
   min-height: 0;
-  filter: drop-shadow(0 0.3vmin 0.9vmin rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(0 0.3dvmin 0.9dvmin rgba(0, 0, 0, 0.35));
 }
 
 .label {
   position: relative;
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: clamp(0.7rem, 2.4vmin, 1.5rem);
+  font-size: clamp(0.7rem, 2.4dvmin, 1.5rem);
   /* Not 1 — see `TypeRoom.module.css`'s note on why this specific font needs more headroom
      than that in the row that sizes to it, on iPad Safari specifically. */
   line-height: 1.3;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  text-shadow: 0 0.2vmin 0.7vmin rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0.2dvmin 0.7dvmin rgba(0, 0, 0, 0.5);
   white-space: nowrap;
 }

@@ -35,13 +35,13 @@
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: clamp(4px, 1vmin, 10px);
+  gap: clamp(4px, 1dvmin, 10px);
 }
 
 .slotWrap {
   display: flex;
   align-items: center;
-  gap: clamp(4px, 1vmin, 10px);
+  gap: clamp(4px, 1dvmin, 10px);
 }
 
 .arrow {
@@ -51,17 +51,17 @@
 }
 
 .arrow svg {
-  width: clamp(16px, 3vmin, 28px);
-  height: clamp(16px, 3vmin, 28px);
+  width: clamp(16px, 3dvmin, 28px);
+  height: clamp(16px, 3dvmin, 28px);
 }
 
 .slot {
   box-sizing: border-box;
-  width: clamp(76px, 19vmin, 190px);
+  width: clamp(76px, 19dvmin, 190px);
   aspect-ratio: 1;
-  border-radius: clamp(14px, 2.4vmin, 22px);
+  border-radius: clamp(14px, 2.4dvmin, 22px);
   background: var(--color-light);
-  box-shadow: 0 0.5vmin 1.6vmin rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0.5dvmin 1.6dvmin rgba(0, 0, 0, 0.3);
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -72,8 +72,8 @@
 
 .slot[data-filled] {
   box-shadow:
-    0 0 0 clamp(3px, 0.6vmin, 6px) var(--color-primary),
-    0 0.6vmin 1.8vmin rgba(0, 0, 0, 0.35);
+    0 0 0 clamp(3px, 0.6dvmin, 6px) var(--color-primary),
+    0 0.6dvmin 1.8dvmin rgba(0, 0, 0, 0.35);
   transform: scale(1.03);
 }
 
@@ -88,7 +88,7 @@
 .slotNumber {
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: clamp(1.3rem, 4vmin, 2.6rem);
+  font-size: clamp(1.3rem, 4dvmin, 2.6rem);
   color: var(--play-ink-dim);
 }
 
@@ -105,12 +105,12 @@
 .tile {
   position: relative;
   box-sizing: border-box;
-  flex: 0 1 clamp(96px, 25vmin, 220px);
+  flex: 0 1 clamp(96px, 25dvmin, 220px);
   aspect-ratio: 1;
-  padding: clamp(4px, 1vmin, 12px);
-  border-radius: clamp(16px, 2.8vmin, 26px);
+  padding: clamp(4px, 1dvmin, 12px);
+  border-radius: clamp(16px, 2.8dvmin, 26px);
   background: var(--color-light);
-  box-shadow: 0 0.5vmin 1.6vmin rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0.5dvmin 1.6dvmin rgba(0, 0, 0, 0.35);
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -141,7 +141,7 @@
   width: var(--play-target);
   height: var(--play-target);
   border-radius: 50%;
-  filter: drop-shadow(0 0.4vmin 1.2vmin rgba(0, 0, 0, 0.45));
+  filter: drop-shadow(0 0.4dvmin 1.2dvmin rgba(0, 0, 0, 0.45));
   animation: nextIn var(--motion-base) var(--ease-pop) both;
 }
 

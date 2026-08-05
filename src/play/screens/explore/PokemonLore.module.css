@@ -2,8 +2,8 @@
    with the name above it. */
 .lore {
   box-sizing: border-box;
-  padding: clamp(10px, 1.8vmin, 16px) clamp(12px, 2vmin, 18px);
-  border-radius: clamp(12px, 1.8vmin, 18px);
+  padding: clamp(10px, 1.8dvmin, 16px) clamp(12px, 2dvmin, 18px);
+  border-radius: clamp(12px, 1.8dvmin, 18px);
   background: rgba(0, 0, 0, 0.16);
 }
 
@@ -11,13 +11,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: clamp(8px, 1.6vmin, 16px);
-  margin-bottom: clamp(4px, 1vmin, 8px);
+  gap: clamp(8px, 1.6dvmin, 16px);
+  margin-bottom: clamp(4px, 1dvmin, 8px);
 }
 
 .version {
   font-family: var(--font-mono);
-  font-size: clamp(0.65rem, 1.3vmin, 0.85rem);
+  font-size: clamp(0.65rem, 1.3dvmin, 0.85rem);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-primary);
@@ -26,7 +26,7 @@
 .text {
   margin: 0;
   font-family: var(--font-body);
-  font-size: clamp(0.85rem, 2vmin, 1.15rem);
+  font-size: clamp(0.85rem, 2dvmin, 1.15rem);
   line-height: 1.35;
   color: var(--play-ink);
 }
@@ -34,13 +34,13 @@
 .pager {
   display: flex;
   align-items: center;
-  gap: clamp(6px, 1.2vmin, 12px);
+  gap: clamp(6px, 1.2dvmin, 12px);
 }
 
 .arrow {
   --tap-min: 0;
-  width: clamp(24px, 3.6vmin, 34px);
-  height: clamp(24px, 3.6vmin, 34px);
+  width: clamp(24px, 3.6dvmin, 34px);
+  height: clamp(24px, 3.6dvmin, 34px);
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -56,13 +56,13 @@
 .dots {
   display: flex;
   align-items: center;
-  gap: clamp(5px, 1vmin, 8px);
+  gap: clamp(5px, 1dvmin, 8px);
 }
 
 .dot,
 .dotActive {
-  width: clamp(5px, 0.9vmin, 8px);
-  height: clamp(5px, 0.9vmin, 8px);
+  width: clamp(5px, 0.9dvmin, 8px);
+  height: clamp(5px, 0.9dvmin, 8px);
   border-radius: 50%;
   background: var(--play-ink);
 }

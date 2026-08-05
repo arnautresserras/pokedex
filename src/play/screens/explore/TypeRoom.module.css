@@ -15,26 +15,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(8px, 1.6vmin, 18px);
+  gap: clamp(8px, 1.6dvmin, 18px);
   color: #fff;
 }
 
 .glyphBox {
-  width: clamp(28px, 5.2vmin, 52px);
-  height: clamp(28px, 5.2vmin, 52px);
+  width: clamp(28px, 5.2dvmin, 52px);
+  height: clamp(28px, 5.2dvmin, 52px);
   flex: 0 0 auto;
-  filter: drop-shadow(0 0.2vmin 0.7vmin rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(0 0.2dvmin 0.7dvmin rgba(0, 0, 0, 0.35));
 }
 
 .title {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: clamp(1.4rem, 5vmin, 3rem);
+  font-size: clamp(1.4rem, 5dvmin, 3rem);
   line-height: 1;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  text-shadow: 0 0.2vmin 0.9vmin rgba(0, 0, 0, 0.4);
+  text-shadow: 0 0.2dvmin 0.9dvmin rgba(0, 0, 0, 0.4);
 }
 
 /* The only scrolling surface in the play app. Verí's 33 members don't fit any screen, so this
@@ -52,7 +52,7 @@
 /* Fixed-width cells, centred — see the component's note on why not `1fr`. */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, clamp(112px, 21vmin, 200px));
+  grid-template-columns: repeat(auto-fill, clamp(112px, 21dvmin, 200px));
   justify-content: center;
   gap: var(--play-gap);
 }
@@ -61,12 +61,12 @@
   box-sizing: border-box;
   width: 100%;
   aspect-ratio: 1;
-  padding: clamp(4px, 1vmin, 10px);
-  border-radius: clamp(14px, 2.4vmin, 22px);
+  padding: clamp(4px, 1dvmin, 10px);
+  border-radius: clamp(14px, 2.4dvmin, 22px);
   /* Pale wash of the room's own colour: the sprites are small and busy, and they need a light
      surface to sit on, but the room must stay recognisably one colour throughout. */
   background: var(--color-light);
-  box-shadow: 0 0.5vmin 1.4vmin rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0.5dvmin 1.4dvmin rgba(0, 0, 0, 0.3);
   display: grid;
   /* `minmax(0, 1fr)`, never a bare `1fr`: a bare one is `minmax(auto, 1fr)`, so the sprite row's
      floor is the sprite's own intrinsic height *and* the track's size becomes content-dependent —
@@ -103,7 +103,7 @@
   max-width: 100%;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(0.8rem, 2.2vmin, 1.25rem);
+  font-size: clamp(0.8rem, 2.2dvmin, 1.25rem);
   line-height: 1.3;
   letter-spacing: 0.03em;
   text-transform: uppercase;

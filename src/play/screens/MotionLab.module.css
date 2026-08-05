@@ -34,7 +34,7 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  font-size: clamp(1.4rem, 4vmin, 2.2rem);
+  font-size: clamp(1.4rem, 4dvmin, 2.2rem);
 }
 
 .flag {
@@ -62,7 +62,7 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(1rem, 2.8vmin, 1.4rem);
+  font-size: clamp(1rem, 2.8dvmin, 1.4rem);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--play-ink);
@@ -71,7 +71,7 @@
 .hint {
   margin: 0;
   font-family: var(--font-body);
-  font-size: clamp(0.85rem, 2vmin, 1.05rem);
+  font-size: clamp(0.85rem, 2dvmin, 1.05rem);
   color: var(--play-ink-dim);
 }
 
@@ -89,7 +89,7 @@
   background: linear-gradient(160deg, var(--color-primary), var(--color-accent));
   display: grid;
   place-items: center;
-  box-shadow: 0 1vmin 2.5vmin rgba(0, 0, 0, 0.35);
+  box-shadow: 0 1dvmin 2.5dvmin rgba(0, 0, 0, 0.35);
 }
 
 .tileSprite {
@@ -99,14 +99,14 @@
 
 /* 2 — celebration */
 .celebrateBox {
-  min-height: 46vmin;
+  min-height: 46dvmin;
   border-radius: var(--play-radius);
   background: var(--play-surface);
 }
 
 .celebrateTarget {
-  width: 34vmin;
-  height: 34vmin;
+  width: 34dvmin;
+  height: 34dvmin;
   border-radius: 50%;
   background: radial-gradient(circle at 50% 45%, var(--color-light), var(--color-primary) 78%);
   display: grid;
@@ -119,7 +119,7 @@
 
 /* 3 — scene transition */
 .sceneFrame {
-  height: 44vmin;
+  height: 44dvmin;
   border-radius: var(--play-radius);
   overflow: hidden;
   background: linear-gradient(180deg, var(--color-light), var(--color-primary));
@@ -142,7 +142,7 @@
 .sceneName {
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: clamp(1.5rem, 5vmin, 3rem);
+  font-size: clamp(1.5rem, 5dvmin, 3rem);
   text-transform: uppercase;
   color: var(--color-accent);
   letter-spacing: 0.03em;

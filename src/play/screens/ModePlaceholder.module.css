@@ -11,8 +11,8 @@
 }
 
 .glyphBox {
-  width: min(46vmin, 380px);
-  height: min(46vmin, 380px);
+  width: min(46dvmin, 380px);
+  height: min(46dvmin, 380px);
   display: grid;
   place-items: center;
 }
@@ -21,17 +21,17 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: clamp(2rem, 8vmin, 4.5rem);
+  font-size: clamp(2rem, 8dvmin, 4.5rem);
   line-height: 1;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: #fff;
-  text-shadow: 0 0.3vmin 1.2vmin rgba(0, 0, 0, 0.4);
+  text-shadow: 0 0.3dvmin 1.2dvmin rgba(0, 0, 0, 0.4);
 }
 
 .note {
   margin: 0;
   font-family: var(--font-body);
-  font-size: clamp(1rem, 3vmin, 1.6rem);
+  font-size: clamp(1rem, 3dvmin, 1.6rem);
   color: var(--color-light);
 }

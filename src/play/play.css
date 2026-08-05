@@ -24,7 +24,7 @@
   --play-ink-dim: #a7a7b4;
 
   --play-radius: 28px;
-  --play-gap: clamp(10px, 2.2vmin, 22px);
+  --play-gap: clamp(10px, 2.2dvmin, 22px);
   /* Minimum tap target. 44px is the Apple floor; these users are under 6. */
   --play-target: 88px;
 

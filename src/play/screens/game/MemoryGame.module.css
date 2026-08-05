@@ -23,15 +23,15 @@
    by giving `Celebrate`'s child an intrinsic size instead of a percentage of its parent. */
 .grid {
   display: grid;
-  grid-template-columns: repeat(4, clamp(90px, 22vmin, 230px));
-  grid-template-rows: repeat(3, clamp(90px, 22vmin, 230px));
-  gap: clamp(8px, 1.8vmin, 20px);
+  grid-template-columns: repeat(4, clamp(90px, 22dvmin, 230px));
+  grid-template-rows: repeat(3, clamp(90px, 22dvmin, 230px));
+  gap: clamp(8px, 1.8dvmin, 20px);
 }
 
 @media (orientation: portrait) {
   .grid {
-    grid-template-columns: repeat(3, clamp(90px, 25vmin, 230px));
-    grid-template-rows: repeat(4, clamp(90px, 25vmin, 230px));
+    grid-template-columns: repeat(3, clamp(90px, 25dvmin, 230px));
+    grid-template-rows: repeat(4, clamp(90px, 25dvmin, 230px));
   }
 }
 
@@ -42,7 +42,7 @@
   height: 100%;
   min-width: 0;
   min-height: 0;
-  perspective: 120vmin;
+  perspective: 120dvmin;
 }
 
 .inner {
@@ -62,8 +62,8 @@
   position: absolute;
   inset: 0;
   backface-visibility: hidden;
-  border-radius: clamp(10px, 2vmin, 18px);
-  box-shadow: 0 0.5vmin 1.6vmin rgba(0, 0, 0, 0.35);
+  border-radius: clamp(10px, 2dvmin, 18px);
+  box-shadow: 0 0.5dvmin 1.6dvmin rgba(0, 0, 0, 0.35);
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -80,7 +80,7 @@
   width: 42%;
   aspect-ratio: 1;
   border-radius: 50%;
-  border: clamp(3px, 0.8vmin, 6px) solid rgba(255, 255, 255, 0.5);
+  border: clamp(3px, 0.8dvmin, 6px) solid rgba(255, 255, 255, 0.5);
 }
 
 .front {
@@ -102,7 +102,7 @@
   width: var(--play-target);
   height: var(--play-target);
   border-radius: 50%;
-  filter: drop-shadow(0 0.4vmin 1.2vmin rgba(0, 0, 0, 0.45));
+  filter: drop-shadow(0 0.4dvmin 1.2dvmin rgba(0, 0, 0, 0.45));
   animation: nextIn var(--motion-base) var(--ease-pop) both;
 }
 
