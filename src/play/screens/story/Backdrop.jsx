@@ -167,6 +167,97 @@ const BACKDROPS = {
     leaves: ['#C9B24A', '#A68A2E', '#E0CD6A', '#8C7328', '#B49A3E'],
     motes: 4,
   },
+
+  // "Aventures" (episodes/) — the Kanto anime episodes. Same three shapes again, repurposed
+  // for indoor/urban settings rather than forced into a fourth shape component: the `floor`
+  // shape's litter blobs become tiled-floor clutter, the `forest` shape's treeline becomes a
+  // town's roofline, `canopy`'s bright gap becomes cave-glow or a skylight. Abstracted, not
+  // literal — same rule the original three backdrops already follow.
+  'pallet-lab': {
+    shape: 'floor',
+    sky: ['#EDF1F4', '#D3DCE3'],
+    floor: '#C7D0D8',
+    leaves: ['#E63946', '#F1FAEE', '#E63946', '#F1FAEE', '#E63946'],
+    motes: 0,
+  },
+
+  'route1-trail': {
+    shape: 'forest',
+    sky: ['#BFE8FF', '#EAF7D8'],
+    trees: ['#79C15A', '#4F9A45', '#2E6B34'],
+    floor: '#6B5637',
+    trail: '#C9A868',
+    sun: { cx: 55, cy: 12, r: 9 },
+    motes: 5,
+  },
+
+  riverside: {
+    shape: 'forest',
+    sky: ['#DFF3FF', '#BEE6FF'],
+    trees: ['#5C9E76', '#3F7A56', '#274F38'],
+    floor: '#2E6F8E',
+    trail: '#5FA8CE',
+    sun: { cx: 70, cy: 10, r: 8 },
+    motes: 6,
+  },
+
+  'pokemon-center': {
+    shape: 'floor',
+    sky: ['#FFFFFF', '#FDEEF0'],
+    floor: '#E8E8E8',
+    leaves: ['#E63946', '#FFFFFF', '#E63946', '#FFFFFF', '#E63946'],
+    motes: 0,
+  },
+
+  'mt-moon-cave': {
+    shape: 'canopy',
+    sky: ['#1B1440', '#0D0A24'],
+    trees: ['#4A3B6B', '#332955', '#211C3B'],
+    motes: 6,
+  },
+
+  'pewter-gym': {
+    shape: 'floor',
+    sky: ['#D9CBB0', '#B7A788'],
+    floor: '#5C4A36',
+    leaves: ['#8C7A5E', '#6E5D45', '#A0906F', '#5C4A36', '#786549'],
+    motes: 0,
+  },
+
+  'cerulean-gym': {
+    shape: 'floor',
+    sky: ['#CDEFFF', '#9FD8F2'],
+    floor: '#2E86AB',
+    leaves: ['#5FB6D9', '#8FD3EC', '#3E9BC2', '#7BC8E6', '#4CA8CE'],
+    motes: 0,
+  },
+
+  // A generic Kanto town square — reused across every "arriving somewhere" beat (Pallet,
+  // Pewter, Cerulean, the road onward) rather than one near-identical backdrop per town.
+  'kanto-town': {
+    shape: 'forest',
+    sky: ['#DCEFFF', '#FDF3D0'],
+    trees: ['#9FB8C9', '#7C97AA', '#5A7688'],
+    floor: '#6B7280',
+    trail: '#B8BEC7',
+    sun: { cx: 60, cy: 10, r: 9 },
+    motes: 4,
+  },
+
+  'hidden-glade': {
+    shape: 'canopy',
+    sky: ['#FFF6D8', '#CFE8A0'],
+    trees: ['#8FBE5E', '#679C46', '#3E6B30'],
+    motes: 8,
+  },
+
+  'tech-school': {
+    shape: 'floor',
+    sky: ['#E4ECF5', '#C7D6E8'],
+    floor: '#B0BCC9',
+    leaves: ['#4A6FA5', '#6E8CB8', '#8FA9CC', '#3C5A85', '#5A7CAA'],
+    motes: 0,
+  },
 }
 
 /** Fixed drift positions. Dust in a sunbeam in the forest, spores under the leaves. */

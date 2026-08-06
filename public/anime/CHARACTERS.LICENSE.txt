@@ -1,0 +1,13 @@
+The character portraits in public/anime/ are official Pokémon animation artwork
+(original series era), sourced from Bulbagarden Archives and used there under their own fair-use
+rationale for encyclopedic/reference use (see https://archives.bulbagarden.net/wiki/Bulbapedia:Copyrights).
+They remain the copyright of their respective owners (The Pokémon Company / Nintendo / Game Freak /
+OLM). Vendored here only for this personal, unpublished, non-commercial family app — not for
+redistribution.
+
+Sources:
+  ash (Ash Ketchum): https://archives.bulbagarden.net/wiki/File:Ash_OS_1.png
+  misty (Misty): https://archives.bulbagarden.net/wiki/File:Misty_OS_2.png
+  brock (Brock): https://archives.bulbagarden.net/wiki/File:Brock_OS.png
+  oak (Professor Oak): https://archives.bulbagarden.net/wiki/File:Professor_Oak_OS_anime.png
+  team-rocket (Team Rocket (Jessie, James, Meowth)): https://archives.bulbagarden.net/wiki/File:Team_Rocket_trio_OS.png

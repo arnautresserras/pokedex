@@ -94,17 +94,18 @@
    same bargain the mode labels make. Never the affordance: the sprite is. */
 /* `line-height` isn't a style choice here — it's what sizes this row (the grid's `auto` track
    below the sprite's `minmax(0, 1fr)`). A ratio this font's actual glyph metrics need more of
-   than it gets clips the *bottom* of every letter against `.cell`'s `overflow: hidden`, no
-   matter how much spare room the cell has elsewhere — the sprite row doesn't donate space to
-   this one once track sizes are resolved. 1.3 is the headroom this display font needs on iPad
-   Safari specifically; Blink's font metrics are forgiving enough that a tighter ratio never
-   showed the bug there. */
+   than it gets clips the top or bottom of a letter (accented capitals — "É", "Í" — worst of
+   all) against `.cell`'s `overflow: hidden`, no matter how much spare room the cell has
+   elsewhere — the sprite row doesn't donate space to this one once track sizes are resolved.
+   1.3 covered this on the newer iPad this was first tuned against; the older WebKit on an iPad
+   Air 2 needs more clearance still, hence 1.5. Blink's font metrics are forgiving enough that a
+   tighter ratio never showed the bug there. */
 .name {
   max-width: 100%;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: clamp(0.8rem, 2.2dvmin, 1.25rem);
-  line-height: 1.3;
+  line-height: 1.5;
   letter-spacing: 0.03em;
   text-transform: uppercase;
   color: var(--color-accent);

@@ -6,8 +6,8 @@
  * lives in exactly one place. Adding a fourth mode later is an entry here plus a glyph.
  *
  * **Colour is the mode's name** for a child who can't read one: the tile, the entry
- * transition and everything inside the mode share a single hue, and the three hues are far
- * apart (blue / violet / amber) so they're told apart at a glance and across the room.
+ * transition and everything inside the mode share a single hue, and the four hues are far
+ * apart (blue / violet / amber / green) so they're told apart at a glance and across the room.
  * They deliberately sit outside `TYPE_COLORS` — a mode must never be mistaken for a type
  * room — but keep the same `primary` / `light` / `accent` shape so components read the same
  * three CSS custom properties the print book's cards do.
@@ -33,6 +33,11 @@ export const MODES = [
     id: 'game',
     label: 'Endevina',
     colors: { primary: '#F2A03D', light: '#FFEDD2', accent: '#9C5406' },
+  },
+  {
+    id: 'series',
+    label: 'Aventures',
+    colors: { primary: '#3FAE58', light: '#DFF5E4', accent: '#1F6B34' },
   },
 ]
 

@@ -18,8 +18,10 @@ import cache from '../src/data/pokemon-cache.json' with { type: 'json' }
 
 const ROOT = path.resolve(import.meta.dirname, '..')
 const failures = []
+const warnings = []
 
 const fail = msg => failures.push(msg)
+const warn = msg => warnings.push(msg)
 const exists = p => access(p).then(() => true, () => false)
 
 async function checkAssets() {
@@ -167,15 +169,103 @@ async function checkStories() {
   }
 }
 
+/**
+ * `Backdrop.jsx`'s `BACKDROPS` and `animeCharacters.js`'s `CHARACTERS` can't be imported under
+ * plain Node the way this script imports `episodes/index.js` itself — the former is JSX, the
+ * latter reads `import.meta.env.BASE_URL` at module scope, both Vite-only. Their ids are read
+ * back out of the source text instead, the same trick `checkFonts` already uses on `fonts.css`.
+ */
+async function loadBackdropIds() {
+  const text = await readFile(
+    path.join(ROOT, 'src', 'play', 'screens', 'story', 'Backdrop.jsx'),
+    'utf8',
+  )
+  const block = text.match(/const BACKDROPS = \{([\s\S]*?)\n\}/)?.[1] ?? ''
+  return new Set([...block.matchAll(/^ {2}(?:'([^']+)'|([\w-]+)):\s*\{/gm)].map(m => m[1] ?? m[2]))
+}
+
+async function loadCharacterIds() {
+  const text = await readFile(path.join(ROOT, 'src', 'play', 'animeCharacters.js'), 'utf8')
+  return new Set([...text.matchAll(/\{\s*id:\s*'([^']+)'/g)].map(m => m[1]))
+}
+
+/**
+ * Same shape as `checkStories`, for `src/play/episodes/` — but episodes are linear (a `next`
+ * chain, no `choices`) and an encounter names a fixed `pokemonId` (canon cast) rather than a
+ * random `pool`, so the checks are simpler: no icon/label pair to validate, and "resolves to
+ * nobody" means the dex id isn't in the cache rather than a `STORY_POOLS` typo.
+ *
+ * `backdrop`/`cast`/`protagonist` ids that don't resolve are warnings, not failures: both
+ * `Backdrop` and `Cast` fall back gracefully at runtime (an unresolved id costs atmosphere, not
+ * playability), and `checkStories` leaves the same tier of typo unchecked for its own `Backdrop`
+ * ids — this only surfaces the mistake instead of leaving it silent.
+ */
+async function checkEpisodes() {
+  const episodesDir = path.join(ROOT, 'src', 'play', 'episodes')
+  if (!(await exists(episodesDir))) return
+
+  const { EPISODES } = await import(pathToFileURL(path.join(episodesDir, 'index.js')).href)
+  const cacheIds = new Set(cache.map(p => p.id))
+  const backdropIds = await loadBackdropIds()
+  const characterIds = await loadCharacterIds()
+
+  for (const episode of Object.values(EPISODES ?? {})) {
+    const scenes = episode.scenes ?? {}
+    if (!scenes[episode.start]) fail(`episode "${episode.id}" has no start scene`)
+    if (episode.protagonist && !characterIds.has(episode.protagonist)) {
+      warn(`episode "${episode.id}" protagonist "${episode.protagonist}" doesn't resolve — that character won't render`)
+    }
+    const reached = new Set([episode.start])
+    for (const [key, scene] of Object.entries(scenes)) {
+      const where = `episode "${episode.id}" scene "${key}"`
+      const narration = scene.narration ?? []
+      if (!narration.some(line => line?.trim())) {
+        fail(`${where} has no narration — the parent would have nothing to read`)
+      }
+      if (scene.backdrop && !backdropIds.has(scene.backdrop)) {
+        warn(`${where} backdrop "${scene.backdrop}" doesn't resolve — falls back to "forest-edge"`)
+      }
+      for (const castId of scene.cast ?? []) {
+        if (!characterIds.has(castId)) {
+          warn(`${where} cast id "${castId}" doesn't resolve — that character won't render`)
+        }
+      }
+      if (scene.next) {
+        if (!scenes[scene.next]) fail(`${where} next → unknown scene "${scene.next}"`)
+        else reached.add(scene.next)
+      }
+      const terminal = !scene.next
+      if (terminal && scene.type !== 'ending') {
+        fail(`${where} is a dead end but is not an ending`)
+      }
+      if (scene.type === 'encounter') {
+        if (!scene.pokemonId) fail(`${where} is an encounter with no pokemonId`)
+        else if (!cacheIds.has(scene.pokemonId)) {
+          fail(`${where} pokemonId ${scene.pokemonId} doesn't resolve in the cache`)
+        }
+      }
+    }
+    for (const key of Object.keys(scenes)) {
+      if (!reached.has(key)) fail(`episode "${episode.id}" scene "${key}" is unreachable`)
+    }
+  }
+}
+
 await checkAssets()
 await checkFonts()
 await checkIcons()
 await checkSilence()
 await checkStories()
+await checkEpisodes()
+
+if (warnings.length) {
+  console.warn(`verify-play: ${warnings.length} warning(s) — atmosphere-only, doesn't fail the build\n`)
+  for (const w of warnings) console.warn(`  ! ${w}`)
+}
 
 if (failures.length) {
   console.error(`verify-play: ${failures.length} problem(s)\n`)
   for (const f of failures) console.error(`  ✗ ${f}`)
   process.exit(1)
 }
-console.log('verify-play: assets, fonts, icons, silence and stories all check out')
+console.log('verify-play: assets, fonts, icons, silence, stories and episodes all check out')

@@ -1,0 +1,28 @@
+/* A normal flex child of `.action` (via `EpisodeScene.module.css`'s `.protagonist` grid area) —
+   one or more character cutouts standing together, same non-absolute placement `Protagonist`
+   uses and for the same reason: nothing here should float over the backdrop or hide behind the
+   narration panel on a long scene.
+
+   `height: 100%`, not a fixed `clamp(...)`: the grid area now stretches to fill its track (see
+   `.protagonist`'s `align-self: stretch`), so the portraits size themselves off *that* — the
+   actual guaranteed band — rather than off the viewport in isolation. `max-height` is the
+   ceiling for when the band is generous; `flex-shrink: 1` lets a portrait give way if two
+   characters together would otherwise run wider than the column. */
+.cast {
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(6px, 1.6dvmin, 18px);
+  height: 100%;
+  min-height: 0;
+}
+
+.portrait {
+  flex-shrink: 1;
+  min-height: 0;
+  height: 100%;
+  width: auto;
+  max-height: clamp(64px, 22dvmin, 240px);
+  max-width: 100%;
+  filter: drop-shadow(0 0.6dvmin 1.6dvmin rgba(0, 0, 0, 0.45));
+  pointer-events: none;
+}

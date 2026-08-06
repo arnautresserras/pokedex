@@ -6,22 +6,25 @@ import ModePlaceholder from './screens/ModePlaceholder'
 import Explore from './screens/explore/Explore'
 import Story from './screens/story/Story'
 import Game from './screens/game/Game'
+import Series from './screens/series/Series'
 import { MODES } from './modes'
 import './play.css'
 
 /**
- * The screen a mode is built out. All three are built now, so `ModePlaceholder` is unreachable
+ * The screen a mode is built out. All four are built now, so `ModePlaceholder` is unreachable
  * from `MODES` — it stays as the fallback because that's what made slices 3, 4 and 5 one line
- * each, and it's what a fourth mode would land on before it has a screen.
+ * each, and it's what a fifth mode would land on before it has a screen.
  *
  * Every mode screen owns a subtree (`/play/<id>/*`), not a single path: Explore is three levels
- * deep and Story is two (a story, then its scenes as state), and their inner routing is their
- * own business. Game has no second level and says so by redirecting anything deeper.
+ * deep, Story and Series are both two (a story or episode, then its scenes as state), and their
+ * inner routing is their own business. Game has no second level and says so by redirecting
+ * anything deeper.
  */
 const MODE_SCREENS = {
   explore: Explore,
   story: Story,
   game: Game,
+  series: Series,
 }
 
 /**

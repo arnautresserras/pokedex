@@ -1,0 +1,27 @@
+.controls {
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 1.4dvmin, 14px);
+}
+
+.control {
+  --tap-min: 0;
+  width: clamp(30px, 4.6dvmin, 44px);
+  height: clamp(30px, 4.6dvmin, 44px);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(10, 14, 11, 0.42);
+  color: var(--play-ink);
+  opacity: 0.62;
+}
+
+.control svg {
+  display: block;
+  width: 62%;
+  height: 62%;
+}
+
+.control:disabled {
+  opacity: 0.2;
+}

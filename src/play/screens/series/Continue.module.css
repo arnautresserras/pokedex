@@ -1,0 +1,11 @@
+.continue {
+  width: clamp(72px, 14dvmin, 140px);
+  height: clamp(72px, 14dvmin, 140px);
+  filter: drop-shadow(0 0.5dvmin 1.4dvmin rgba(0, 0, 0, 0.4));
+}
+
+.continue svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}

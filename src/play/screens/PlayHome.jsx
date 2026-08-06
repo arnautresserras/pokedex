@@ -7,9 +7,9 @@ import styles from './PlayHome.module.css'
 /**
  * The mode switcher, and the first thing the app opens to.
  *
- * Three tiles, nothing else: one screenful, no scroll, no chrome, no decision that needs
- * reading. Each fills a third of the screen because the P0 criterion is that a non-reader
- * finds all three unaided — at that size the pictogram is legible from a parent's lap and
+ * Four tiles, nothing else: one screenful, no scroll, no chrome, no decision that needs
+ * reading. Each fills a quarter of the screen because the P0 criterion is that a non-reader
+ * finds every mode unaided — at that size the pictogram is legible from a parent's lap and
  * every tile is a tap target several times over.
  *
  * The tiles are the only thing a child should find here. The two parent-facing links (motion

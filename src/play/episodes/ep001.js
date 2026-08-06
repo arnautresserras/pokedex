@@ -1,0 +1,21 @@
+export const EP001 = {
+  id: 'ep001',
+  code: 'EP001',
+  protagonist: 'ash',
+  start: 'lab',
+  scenes: {
+    lab: { backdrop: 'pallet-lab', cast: ['oak'], next: 'reveal' },
+    reveal: { backdrop: 'pallet-lab', cast: ['oak'], next: 'openBall' },
+    openBall: { backdrop: 'pallet-lab', next: 'pikachu' },
+    pikachu: { type: 'encounter', backdrop: 'pallet-lab', pokemonId: 25, next: 'route1' },
+    route1: { backdrop: 'route1-trail', next: 'walk' },
+    walk: { backdrop: 'route1-trail', next: 'sight' },
+    sight: { backdrop: 'route1-trail', next: 'pidgey' },
+    pidgey: { type: 'encounter', backdrop: 'route1-trail', pokemonId: 16, next: 'stone' },
+    stone: { backdrop: 'route1-trail', next: 'spearow' },
+    spearow: { type: 'encounter', backdrop: 'route1-trail', pokemonId: 21, next: 'misty' },
+    misty: { backdrop: 'riverside', cast: ['misty'], next: 'mistyIntro' },
+    mistyIntro: { backdrop: 'riverside', cast: ['misty'], next: 'finale' },
+    finale: { type: 'ending', backdrop: 'route1-trail' },
+  },
+}

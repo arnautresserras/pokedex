@@ -7,21 +7,21 @@
   padding: var(--play-gap);
 }
 
-/* One screenful, never scrolled: three equal tiles that follow the iPad's orientation.
-   Landscape gets columns, portrait gets rows — always three, always the same order, so the
+/* One screenful, never scrolled: four equal tiles that follow the iPad's orientation.
+   Landscape gets columns, portrait gets rows — always four, always the same order, so the
    position of a mode is learnable. */
 .tiles {
   flex: 1 1 auto;
   min-height: 0;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--play-gap);
 }
 
 @media (orientation: portrait) {
   .tiles {
     grid-template-columns: 1fr;
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
   }
 }
 

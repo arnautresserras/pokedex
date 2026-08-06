@@ -1,0 +1,116 @@
+/* Forked from ../story/StoryScene.module.css rather than shared, because the row math is
+   inverted: Story mode's narration is authored to a strict ~330-char budget, so giving its
+   narration row `auto` (grow to content) and the protagonist row `1fr` (take whatever's left)
+   never starves the protagonist. Aventures' narration is deliberately much longer, so with that
+   same split the narration row could grow past the cast row's needs and squeeze it to nothing —
+   and since the character art doesn't shrink, it overflowed past its row and got clipped by
+   `.scene`'s `overflow: hidden`. Here it's the other way round: the cast row gets a guaranteed
+   band that narration length can never take from it, and narration is the row that's capped and
+   scrolls internally (`Narration.module.css`'s `overflow-y: auto` already exists for exactly
+   this — it just never had to engage before). */
+.scene {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.layout {
+  position: relative;
+  box-sizing: border-box;
+  height: 100%;
+  padding: var(--play-gap);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, auto);
+  gap: var(--play-gap);
+  align-items: end;
+}
+
+.narration {
+  max-height: 100%;
+  min-height: 0;
+}
+
+.action {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* Narration scenes: a guaranteed cast band on top, narration+action sharing whatever's left —
+   the reverse of Story's `1fr auto`. */
+.layout:not([data-action='encounter']) {
+  grid-template-rows: minmax(16dvmin, 22dvmin) minmax(0, 1fr);
+  grid-template-areas:
+    'protagonist .'
+    'narration action';
+}
+
+.layout:not([data-action='encounter']) .narration {
+  grid-area: narration;
+}
+
+.layout:not([data-action='encounter']) .action {
+  grid-area: action;
+}
+
+/* `stretch`, not `end`: the cast row's height now comes from the grid track, not from the
+   image's own intrinsic size, so the wrapper has to fill the track for `Cast.module.css`'s
+   `height: 100%` to mean anything.
+
+   `padding-left` clears `ModeScreen`'s `HomeButton`: `.layout`'s own padding already starts
+   this row's box at the same `--play-gap` origin the button is anchored to, so without it the
+   cast art renders directly underneath. Portrait resets this to 0 — there the cast row sits
+   below the narration row and never reaches that corner. */
+.protagonist {
+  grid-area: protagonist;
+  justify-self: start;
+  align-self: stretch;
+  min-height: 0;
+  padding-left: var(--play-target);
+}
+
+.layout[data-action='encounter'] {
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+}
+
+.layout[data-action='encounter'] .action {
+  align-self: stretch;
+  padding-top: calc(var(--play-target) * 0.55);
+}
+
+@media (orientation: portrait) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    padding-top: calc(var(--play-gap) + var(--play-target));
+    align-items: stretch;
+  }
+
+  .layout[data-action='encounter'] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .layout[data-action='encounter'] .action {
+    padding-top: 0;
+  }
+
+  /* Narration on top and capped (scrolls internally if it overruns), cast in a guaranteed
+     middle band, action pinned to the bottom. */
+  .layout:not([data-action='encounter']) {
+    grid-template-rows: minmax(0, 1fr) minmax(14dvmin, 20dvmin) auto;
+    grid-template-areas:
+      'narration'
+      'protagonist'
+      'action';
+  }
+
+  /* The narration row above already clears the home button; the cast row doesn't need the
+     landscape-only inset. */
+  .protagonist {
+    padding-left: 0;
+  }
+}

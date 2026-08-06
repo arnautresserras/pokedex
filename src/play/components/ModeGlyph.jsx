@@ -9,6 +9,7 @@ import styles from './ModeGlyph.module.css'
  *   explore → the type-room index itself, six coloured rooms in miniature ("pick a colour")
  *   story   → an open book with a forest on the page — the object the parent holds and reads
  *   game    → an actual silhouette with a "?", which is literally the game screen
+ *   series  → a TV screen with a play triangle — the object the episodes are watched on
  *
  * Nothing here is an abstract icon a 4-year-old would have to be taught. Everything is inline
  * SVG or a vendored asset — no icon font, no remote request, nothing a service worker can
@@ -32,6 +33,8 @@ export default function ModeGlyph({ mode, className = '' }) {
       return <StoryGlyph className={classes} />
     case 'game':
       return <GameGlyph className={classes} />
+    case 'series':
+      return <SeriesGlyph className={classes} />
     default:
       return null
   }
@@ -90,5 +93,32 @@ function GameGlyph({ className }) {
         ?
       </span>
     </span>
+  )
+}
+
+/** A TV screen with a play triangle — the object the episodes are watched on. */
+function SeriesGlyph({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 100 100" aria-hidden="true">
+      <rect
+        x="10"
+        y="24"
+        width="80"
+        height="56"
+        rx="10"
+        fill="var(--play-ink)"
+        stroke="var(--color-accent)"
+        strokeWidth="4"
+      />
+      <path
+        d="M32 16 46 24M68 16 54 24"
+        fill="none"
+        stroke="var(--color-accent)"
+        strokeWidth="4"
+        strokeLinecap="round"
+      />
+      <circle cx="50" cy="52" r="21" fill="var(--color-primary)" />
+      <path d="M44 41 64 52 44 63z" fill="var(--play-surface)" />
+    </svg>
   )
 }
