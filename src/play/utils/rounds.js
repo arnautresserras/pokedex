@@ -258,3 +258,31 @@ export function buildMemoryRound(roster, { recent = [] } = {}) {
 
   return { cards, recentIds: chosen.map(p => p.id) }
 }
+
+/**
+ * Board size for "Trenca-closques" — a 3 × 2 grid. Told twice by convention, the same way
+ * `MEMORY_PAIRS` is: `JigsawGame`'s grid geometry (3 columns, 2 rows) has to agree with this
+ * count, since a piece's crop of the art depends on knowing where it sits in that grid.
+ */
+const JIGSAW_PIECES = 6
+
+/**
+ * One round of "Trenca-closques" — a single Pokémon (there's nothing to choose between, so no
+ * distractors) plus a shuffled starting order for its art sliced into `JIGSAW_PIECES` pieces.
+ * `pieces[slot]` is which original piece currently sits in that slot; the puzzle is solved when
+ * every slot holds its own piece. Reshuffled until the start isn't already solved — a six-piece
+ * permutation lands on the identity about 1 time in 720, often enough that leaving it unchecked
+ * would occasionally hand a child a "finished" puzzle with nothing to do.
+ */
+export function buildJigsawRound(roster, { recent = [] } = {}) {
+  const excluded = new Set(recent)
+  const pool = roster.filter(pokemon => !excluded.has(pokemon.id))
+  const answer = shuffled(pool.length ? pool : roster)[0]
+
+  let pieces = shuffled([...Array(JIGSAW_PIECES).keys()])
+  while (pieces.every((piece, slot) => piece === slot)) {
+    pieces = shuffled(pieces)
+  }
+
+  return { answer, pieces, recentIds: [answer.id] }
+}

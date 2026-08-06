@@ -22,8 +22,21 @@ import styles from './AnswerOptions.module.css'
  *
  * The mark is a **static ring plus a tick**, not an animation, so it survives
  * `prefers-reduced-motion` intact: the round's outcome must never be carried by motion alone.
+ *
+ * `imageUrl` defaults to `artUrl` — the hero-art options every other activity here uses — but
+ * `SpriteMatchGame` passes `spriteUrl` and `pixelated` instead: same options grid, same reveal
+ * grammar, the only thing that changes is which vendored image a cell shows.
  */
-export default function AnswerOptions({ options, answerId, picked, onPick, className = '' }) {
+export default function AnswerOptions({
+  options,
+  answerId,
+  picked,
+  onPick,
+  className = '',
+  imageUrl = artUrl,
+  pixelated = false,
+  source = 'game-option',
+}) {
   const revealed = picked != null
 
   return (
@@ -44,10 +57,15 @@ export default function AnswerOptions({ options, answerId, picked, onPick, class
             key={pokemon.id}
             className={classes}
             disabled={revealed}
-            onTap={() => onPokemonTap(pokemon, { source: 'game-option', then: onPick })}
+            onTap={() => onPokemonTap(pokemon, { source, then: onPick })}
             aria-label={pokemon.name}
           >
-            <img className={styles.art} src={artUrl(pokemon.id)} alt="" draggable="false" />
+            <img
+              className={[styles.art, pixelated ? styles.pixelated : ''].filter(Boolean).join(' ')}
+              src={imageUrl(pokemon.id)}
+              alt=""
+              draggable="false"
+            />
             {/* For the parent to read aloud and for the shape a child will come to recognise —
                 the same bargain the room cells and the mode tiles make. Never the affordance. */}
             <span className={styles.name}>{pokemon.name}</span>

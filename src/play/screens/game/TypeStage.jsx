@@ -15,9 +15,9 @@ import styles from './TypeStage.module.css'
  * thing being asked about. Only the *name* stays behind the reveal, same as everywhere else in
  * Game.
  *
- * `FamilyGame` reuses this component as-is for its prompt: "show a Pokémon in full colour, name
- * hidden until revealed" is exactly what "who does this belong with?" needs too, so that
- * activity adds no stage of its own.
+ * `FamilyGame` and `SpriteMatchGame` both reuse this component as-is: "show a Pokémon in full
+ * colour, name hidden until revealed" is exactly what "who does this belong with?" and "which
+ * sprite is this one?" need too, so neither activity adds a stage of its own.
  */
 export default function TypeStage({ pokemon, revealed, onNext }) {
   const [primaryType] = pokemonTypes(pokemon)

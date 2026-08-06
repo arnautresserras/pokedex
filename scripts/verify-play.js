@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Cheap guards for the three failure classes that would break the play app *silently* for a
- * pre-reader who can't report a bug. Not a test runner — see docs/phase-1-plan.md.
+ * pre-reader who can't report a bug. Not a test runner — see docs/implemented/phase-1-plan.md.
  *
  *   1. a missing vendored image  → a blank cell the child just taps again
  *   2. a broken story graph      → a dead end mid-narration, or an encounter with nobody in it

@@ -1,0 +1,76 @@
+.stage {
+  position: relative;
+  box-sizing: border-box;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  justify-items: center;
+  align-items: center;
+  /* Top inset clears the home button's corner, same as every other stage in Game. */
+  padding: calc(var(--play-gap) + var(--play-target) * 0.35) var(--play-gap) var(--play-gap);
+}
+
+.name {
+  composes: name from './SilhouetteStage.module.css';
+}
+
+.celebrate {
+  composes: celebrate from './SilhouetteStage.module.css';
+}
+
+/* A square board, matching the square hero-art canvas it's sliced from — see `piecePosition`'s
+   note in JigsawGame.jsx for why the crop maths only works out if a piece's own aspect ratio is
+   left to `1fr` tracks rather than forced square. */
+.grid {
+  box-sizing: border-box;
+  width: clamp(220px, 58dvmin, 560px);
+  aspect-ratio: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  /* Small on purpose: big enough that six pieces read as separate tiles, small enough that a
+     solved board still reads as one picture rather than a picture cut into six. */
+  gap: clamp(2px, 0.6dvmin, 6px);
+}
+
+.piece {
+  --tap-min: 0;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  border-radius: clamp(6px, 1.2dvmin, 12px);
+  /* Behind whatever transparent margin the source art carries — a piece must never show through
+     to the page background underneath it. */
+  background-color: var(--color-light);
+  background-repeat: no-repeat;
+  /* Scales the full square image up to `COLS`×`ROWS` times a single piece's own box — see
+     `piecePosition` in JigsawGame.jsx. */
+  background-size: 300% 200%;
+  box-shadow: 0 0.4dvmin 1.2dvmin rgba(0, 0, 0, 0.3);
+  transition:
+    transform var(--motion-base) var(--ease-pop),
+    box-shadow var(--motion-base) var(--ease-out);
+}
+
+/* The first tap of a swap — same "ringed in the mode's colour" language `EvolutionOrderGame`'s
+   filled slots use, so a child reads it as "this one's picked up" rather than a state change
+   with no precedent elsewhere in Game. */
+.selected {
+  box-shadow:
+    0 0 0 clamp(3px, 0.6dvmin, 6px) var(--color-primary),
+    0 0.6dvmin 1.8dvmin rgba(0, 0, 0, 0.4);
+  transform: scale(1.04);
+  z-index: 1;
+}
+
+.next {
+  composes: next from './SilhouetteStage.module.css';
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .piece {
+    transition: none;
+  }
+}

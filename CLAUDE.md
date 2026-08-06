@@ -19,7 +19,13 @@ node scripts/fetch-fonts.js           # the three typefaces → public/fonts/ + 
 node scripts/fetch-type-icons.js      # the 15 type pictograms → generates src/play/typeIcons.js
 node scripts/make-icons.js            # home-screen / manifest icons from pokeball.svg → public/icons/
 node scripts/list-people-sprites.js   # scans public/people/ → generates src/play/peopleSprites.js
+node scripts/compose-scene.js         # Tiled .tmx + tileset PNGs (assets/tilesets/) → public/scenes/
+node scripts/label-tileset.js         # annotates a tileset PNG for compose-scene.js
 ```
+
+`npm run` aliases exist for the three most-repeated ones: `assets:play`, `assets:fonts`,
+`assets:icons`. `fetch-type-icons.js` and `list-people-sprites.js` have no alias — run them with
+`node` directly.
 
 Data pipeline (only needed if `src/data/pokemon-cache.json` is missing or must be regenerated —
 run in this order, the fixups mutate the cache in place):
@@ -47,8 +53,8 @@ at all by design, so a stale SW can never confuse a dev session).
    Save as PDF. Left working, not extended.
 2. **The play app** (`src/play/`) — an offline iPad PWA for the owner's under-6 daughters: Explore,
    Story and Game modes, **silent by design** and navigable without reading. This is where new work
-   happens. See [docs/interactive-spec.md](docs/interactive-spec.md) and
-   [docs/phase-1-plan.md](docs/phase-1-plan.md).
+   happens. See [docs/implemented/interactive-spec.md](docs/implemented/interactive-spec.md) and
+   [docs/implemented/phase-1-plan.md](docs/implemented/phase-1-plan.md).
 
 They share `src/data/`, `src/hooks/` and `src/utils/` and nothing else. Print components use `mm`
 units and `overflow: hidden` page shells; play components use viewport units and large tap targets.
@@ -87,6 +93,12 @@ vendored files through `import.meta.env.BASE_URL`, never a bare `/`-rooted path 
   also can't be shown an "update available" button in an app with no readable text. So
   `skipWaiting` stays off: a new version installs quietly and activates on the next cold launch.
   `clientsClaim: true` is still set, so the *first* load is controlled without needing a refresh.
+
+[src/registerServiceWorker.js](src/registerServiceWorker.js), called from `main.jsx`, replaces
+`vite-plugin-pwa`'s auto-injected registration so `registration.update()` also runs on
+`visibilitychange` and `pageshow` — a returning tab checks for a new version without the child
+having to background-and-reopen the app. It still never calls `skipWaiting`: the load-bearing
+"installs quietly, activates on next cold launch" contract above is unchanged.
 
 Icons are generated output like everything else in `public/` — `scripts/make-icons.js` renders four
 PNGs from `public/pokeball.svg` into `public/icons/`, committed. They're flattened onto `--play-bg`
@@ -128,12 +140,17 @@ Hash routing is deliberate: GitHub Pages has no SPA rewrite, and this needs no 4
 /play/explore/:type          → that type's grid
 /play/explore/:type/:id      → one Pokémon's card (`:type` is the room you came from,
                                which is not always the Pokémon's own type)
-/play/story                  → Story — redirects into the only story (a picker lands with a second)
+/play/story                  → Story — a picker over STORY_LIST (currently three: forest, route1,
+                               pikafield); redirects straight in only while there's a single story
 /play/story/:storyId         → that story. The *scene* is state, not a route: the path taken is
                                what gives a scene meaning, and the parent's back must mean
                                "previous scene", not "previous URL"
-/play/game                   → Game — "Who's that Pokémon?". One screen; a round is state, not
-                               a route, so anything deeper redirects here
+/play/game                    → Game — GameIndex: one big tile per activity (silhouette, type,
+                               family, evolution order, memory, sprite match, jigsaw), plus
+                               "Barrejat" for a random one each round
+/play/game/:activity          → GameRound — that activity (or a fresh random one every round, for
+                               "mix"), asked round after round. A round is state, not a route, so
+                               anything deeper redirects to the index
 /play/motion                 → motion lab — the shared feedback primitives, for on-device checks
 /browse        → the whole book, stacked (full print run)
 /pokemon/:id   → single Pokémon page (design/iterate on one card)
@@ -208,32 +225,50 @@ motion/              the shared feedback layer — Tappable, Celebrate, SceneTra
                      useReducedMotion
 components/          ModeScreen (the shell every mode renders inside), HomeButton, BackButton,
                      ModeGlyph, TypeGlyph (15 type pictograms), PlayTypeBadge
-stories/             the story content. `forest.js` is the *graph* (scenes, choices, backdrops,
-                     encounter pool), `forest.ca.js` is the *prose*, `index.js` joins them into
+stories/             the story content: forest.js/forest.ca.js, route1.js/route1.ca.js,
+                     pikafield.js/pikafield.ca.js — each story is a *graph* file (scenes, choices,
+                     backdrops, encounter pool) plus a *prose* file, joined by index.js into
                      STORIES. A new language is a text file; a new story is both plus one line
 utils/playColors.js  type colours with the cache's post-Gen-I types resolved
-utils/playAssets.js  artUrl(id) / spriteUrl(id) / backSpriteUrl(id) → vendored files under
-                     public/pkmn/
+utils/playAssets.js  artUrl(id) / spriteUrl(id) / backSpriteUrl(id) / sceneUrl(id) → vendored
+                     files under public/pkmn/ and public/scenes/
 utils/traits.js      height / weight / speed as 1-of-5 levels, ranked across all 151
 utils/evolution.js   a chain reduced to drawable stages — Gen I filter + Eevee's branch shape
-utils/rounds.js      buildRound() — one Game round: an answer + two *visually distinct*
-                     distractors, distinctness inferred from family / primary type / height band
+utils/rounds.js      five round builders, one per Game activity, sharing the contract
+                     `(roster, { recent }) => { ...roundData, recentIds }`: buildRound (silhouette;
+                     answer + 2 distinct distractors via a family/type/height strictness ladder),
+                     buildTypeRound (a Pokémon + its type + 2 distractor types), buildFamilyRound
+                     (two members of the same evolution family), buildEvolutionRound (an unbranched
+                     2–3-stage Gen I chain to sequence — Eevee excluded, not special-cased),
+                     buildMemoryRound (6 Pokémon × 2 cards; distinctness rules don't apply, the
+                     skill is location memory)
 utils/encounters.js  CATCH_LOCATIONS inverted (route → ids) + STORY_POOLS (a story place → its
-                     Gen I locations) → pickEncounter(). A pool is a *place*, never a cast list
+                     Gen I locations; forest/route1/pikafield) → pickEncounter(). A pool is a
+                     *place*, never a cast list
 utils/onPokemonTap.js  the single "a Pokémon was tapped" call site, used by all three modes
 screens/             PlayHome (the mode switcher), ModePlaceholder (the fallback for a mode with
                      no MODE_SCREENS entry — unreachable from MODES now all three are built),
                      MotionLab
 screens/explore/     Explore (owns the frame and the sub-routing), TypeRoomIndex, TypeRoom,
-                     PokemonCard, TraitMeters, EvolutionStrip
-screens/game/        Game (frame + round state), SilhouetteStage (the question and the reveal),
-                     AnswerOptions (the three picture answers)
-screens/story/       Story (frame, routing, scene state machine), StoryScene (the shared frame
-                     every scene renders in — backdrop, narration panel, action slot),
-                     Narration (the teleprompter), SceneChoices + ChoiceGlyph (the picture
-                     choices), Encounter, Backdrop (5 backdrops from 3 shapes), Protagonist (the
-                     story's back-sprite stand-in on the trail, shown on every non-encounter
-                     scene), ParentControls
+                     PokemonCard, TraitMeters, EvolutionStrip, PokemonLore (pages through the
+                     cache's four flavor texts inside PokemonCard)
+screens/game/        Game (frame + routing, Explore's shape), GameIndex (one tile per activity,
+                     plus "Barrejat"), GameRound (`:activity` — rolls/advances rounds, tracks
+                     last 12 seen ids in recentRef), activities.js (the ACTIVITIES registry —
+                     key → label/builder/Component; see "Game's rules" below), ActivityIcon
+                     (the pictograms GameIndex's tiles use), SilhouetteStage + AnswerOptions
+                     (silhouette, and reused by sprite match), TypeStage + TypeOptions (type,
+                     and TypeStage reused as-is by family and sprite match),
+                     SilhouetteGame/TypeGame/FamilyGame/EvolutionOrderGame/MemoryGame/
+                     SpriteMatchGame/JigsawGame (the seven activity components)
+screens/story/       Story (frame, routing, scene state machine), StoryPicker (shown once
+                     STORY_LIST has more than one entry), StoryScene (the shared frame every scene
+                     renders in — backdrop, narration panel, action slot), Narration (the
+                     teleprompter), SceneChoices + ChoiceGlyph (the picture choices), Encounter,
+                     Backdrop (15 backdrops across 4 shapes, the fourth being a composed tile
+                     image via sceneUrl), Protagonist (the story's stand-in on the trail, shown on
+                     every non-encounter scene — a peopleSprites.js id or a Pokémon back sprite),
+                     ParentControls
 ```
 
 **Every mode renders inside `ModeScreen`.** It owns the two corners — `HomeButton` top-left in every
@@ -260,9 +295,10 @@ for a target that's already large by other means (a type-room tile, an evolution
 floor would otherwise force a minimum the layout doesn't want.
 
 **Corner grammar.** Top-left is always `HomeButton` → `/play`, in every mode, never restyled. Top
-right is `ModeScreen`'s `controls` slot: Explore puts a full-size `BackButton` ("up one level")
-there, Story will put its deliberately small parent controls there. Back navigates to an explicit
-parent path, never `navigate(-1)` — a deep-linked card would otherwise walk out of the app.
+right is `ModeScreen`'s `controls` slot: Explore and Game both put a full-size `BackButton` ("up
+one level") there once they're a level deep, Story puts its deliberately small parent controls
+there instead. Back navigates to an explicit parent path, never `navigate(-1)` — a deep-linked
+card or round would otherwise walk out of the app.
 
 **Glyph sizing contract.** `TypeGlyph` fills its box (`width/height: 100%`) and is sized by a
 wrapper element, never by overriding the SVG's own class — CSS Module ordering across files isn't
@@ -278,14 +314,54 @@ all 15 symbols, and marks the detail shapes upstream fills with a shade of the d
 Those cuts are rendered as an **SVG mask**, so a hole shows the real surface behind it — which is why
 nothing sets `--glyph-cut` any more (a flat fill can't match the gradient the tiles use).
 
-**Game's rules.** The answers are **pictures, not names** — the player can't read — and the
-silhouette and all three options come from the *same* `artUrl(id)` file, so the pose being matched
-is the pose on screen (a sprite is a different pose of the same Pokémon, which turns an easy match
-into a trick question). Distractors must stay visually distinct; `buildRound` guarantees that and
-is the only place that logic belongs. **No score, no streak, no timer, no fail state** — a wrong tap
-reveals the answer and celebrates too. And the reveal must stay legible with motion off: it carries
-four signals (colour fill, `Celebrate`, the stage's light pool switching to the Pokémon's type
-colour, the `?` becoming the name) and only one of them is animation.
+**Game's rules.** Game is two levels, `Explore`'s shape: `GameIndex` (one big tile per activity,
+plus "Barrejat" for a random one) and `GameRound` (`:activity` — that activity, or a fresh random
+one each round for "mix", asked round after round). Both read from `screens/game/activities.js`'s
+`ACTIVITIES` registry (`modes.js`/`typeRooms.js`'s pattern one level down): a key → `{ label,
+build, Component }`. `GameRound` never inspects a round's shape — every builder in `utils/rounds.js`
+returns `{ ...roundData, recentIds }`, and `GameRound` forwards the round to the matching
+`Component` as `{ round, onDone }` and folds `recentIds` into the shared "last 12 seen" exclusion
+list. Adding an eighth activity means one round builder, one component, one registry entry, one
+`ActivityIcon` case — not a change to `GameRound`. `key={roundNo}` on the mounted activity remounts
+it every round, so no activity has to reset its own internal state by hand.
+
+There used to be one screen with a corner tray (`ActivityPicker`) that switched activities without
+leaving the round on screen. Once there were seven activities the tray stopped being a fair target
+for a child, so it's gone — switching activity now means going back to the index, the same gesture
+Explore's rooms already teach.
+
+The seven activities:
+
+- **Silhouette** ("Endevina el Pokémon") — tap 1 of 3 art tiles matching a black silhouette. The
+  silhouette and all three options come from the *same* `artUrl(id)` file, so the pose being
+  matched is the pose on screen (a sprite is a different pose of the same Pokémon, which turns an
+  easy match into a trick question).
+- **Type** ("Endevina el color") — tap 1 of 3 type pictogram tiles matching the shown Pokémon's
+  primary type.
+- **Family** ("Qui és de la família?") — tap the Pokémon from the prompt's evolution family;
+  reuses `TypeStage` and `AnswerOptions` as-is rather than owning its own stage/options.
+- **Evolution order** ("Ordena l'evolució") — tap chain stages into sequence, left to right;
+  tapping anything but the next expected stage does nothing (no wrong state, only "not yet").
+  Limited to unbranched 2–3-stage Gen I chains, so there's always exactly one right order.
+- **Memory** ("Memory") — a 6-pair flip-and-match grid using `artUrl(id)` on both faces of a pair.
+  The only activity where distinctness rules don't apply — the skill being tested is location
+  memory, not identification, so any six Pokémon make a fair board.
+- **Sprite match** ("Troba el sprite") — hero art on stage (again `TypeStage` reused as-is), tap
+  1 of 3 pixel sprites that are the same Pokémon. The inverse lesson from Silhouette: there one
+  picture in two forms is the question, here two *different* pictures of the same Pokémon are.
+  Reuses `buildRound` unchanged — `AnswerOptions` just takes `spriteUrl` instead of its `artUrl`
+  default.
+- **Jigsaw** ("Trenca-closques") — one Pokémon's hero art sliced into a shuffled 3 × 2 grid; tap
+  two pieces to swap them until it's whole. No drag: tap-to-select-then-swap, the same two-tap
+  shape as Memory's flip and Evolution order's tap-to-place.
+
+Distractors must stay visually distinct across the activities that need it; the strictness ladder
+in `rounds.js` guarantees that and is the only place that logic belongs. **No score, no streak, no
+timer, no fail state** anywhere in Game — a wrong tap reveals the answer and celebrates too (except
+evolution order and jigsaw, where there's no "wrong" to reveal, only "not yet"). The silhouette
+reveal must stay legible with motion off: it carries four signals (colour fill, `Celebrate`, the
+stage's light pool switching to the Pokémon's type colour, the `?` becoming the name) and only one
+of them is animation.
 
 **Story's rules.** The mode is an **engine over content**: nothing in `screens/story/` knows what a
 forest is, and a second story must stay a graph file, a text file and one line in
@@ -303,15 +379,18 @@ forest is, and a second story must stay a graph file, a text file and one line i
   over it, the type shrinks below arm's-length legibility or the panel scrolls mid-sentence. An
   encounter's last line ends on a **colon** — the Pokémon's name completes the sentence.
 - **Choices are pictures of places, not arrows.** Left/right needs teaching; sun-versus-shade and
-  up-versus-down don't. Every choice needs an entry in `ChoiceGlyph` (add a case, don't extend a
+  up-versus-down don't. Every choice needs an entry in `ChoiceGlyph` (currently: `sunny-path`,
+  `dark-path`, `branch`, `leaves`, `cloud-gap`, `grass-ripple` — add a case, don't extend a
   generated table) and a label for the parent. An unknown icon renders a magenta placeholder on
   purpose — a blank tile would be indistinguishable from a working one.
-- **An encounter pool is a place.** `STORY_POOLS` maps a story place to real Gen I location names
-  and `CATCH_LOCATIONS` supplies the cast; never hand-pick ids, and don't invent habitat sub-pools
-  the data doesn't have.
-- **A story may name a `protagonist`** — an id into `peopleSprites.js`'s vendored Gen III back
-  sprites — and `StoryScene` stands it on the trail in every narrated scene, never an encounter.
-  It's optional and purely atmospheric: a story with no `protagonist` renders exactly as before.
+- **An encounter pool is a place.** `STORY_POOLS` maps a story place (`forest`, `route1`,
+  `plant-fence`) to real Gen I location names and `CATCH_LOCATIONS` supplies the cast; never
+  hand-pick ids, and don't invent habitat sub-pools the data doesn't have.
+- **A story may name a `protagonist`** — either an id into `peopleSprites.js`'s vendored Gen III
+  back sprites, or `{ pokemon: <id> }` for a Pokémon's own back sprite via `backSpriteUrl` (used
+  by `pikafield.js`) — and `StoryScene` stands it on the trail in every narrated scene, never an
+  encounter. It's optional and purely atmospheric: a story with no `protagonist` renders exactly
+  as before.
 - **The scene is state and the visited path is an array.** Back pops it, restart empties it,
   neither touches history. The parent's controls are deliberately small (`--tap-min: 0`) and that
   size is the whole access control — no dialogs, no long-press gates.
@@ -374,6 +453,10 @@ Use `mm` for structural layout, `rem`/`em` for typography.
   network access and "print background graphics" enabled.
 - The play app's images are **vendored** in `public/pkmn/` (art as 512px WebP, front and back
   sprites as PNG) and must stay that way. Shiny sprites remain remote — print-only.
+- Story backdrop scenes composed from tilesets (`scripts/compose-scene.js` + `scripts/label-tileset.js`,
+  reading Tiled `.tmx` maps and tileset PNGs from `assets/tilesets/`) are rendered once and
+  committed as PNGs to `public/scenes/`, read via `sceneUrl(id)`. Re-run the compose script after
+  editing a `.tmx` map; don't hand-edit the output PNGs.
 - Human sprites for the play app are vendored by hand (not fetched) in `public/people/`:
   `gen3_back/` (13 back-view walking sprites, one of which a story can use as its
   `protagonist`) and `gen3_trainer_sprites/` (~170 front-facing battle sprites, not yet consumed

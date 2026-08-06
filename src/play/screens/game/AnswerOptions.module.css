@@ -42,6 +42,12 @@
   object-fit: contain;
 }
 
+/* The vendored front sprites are 96px pixel art; letting them smooth turns them to mush at
+   cell size — same fix `TypeRoom`'s grid and `EvolutionStrip` use. */
+.pixelated {
+  image-rendering: pixelated;
+}
+
 .name {
   max-width: 100%;
   font-family: var(--font-display);

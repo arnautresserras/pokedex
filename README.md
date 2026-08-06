@@ -7,15 +7,17 @@ Two apps in one repo, sharing one data layer of all 151 Gen I Pokémon
   matter, an index grid and appendices. Exported through the browser's print dialog → Save as PDF.
   Finished; left working, not extended.
 - **The play app** (`src/play/`) — an offline iPad PWA for two children under six. Three modes
-  (Explore, Story, Game), **silent by design**, navigable without reading. This is where new work
-  happens.
+  (Explore, Story, Game), **silent by design**, navigable without reading. Story offers a handful
+  of stories to pick from, and Game is a picker screen of seven picture-matching activities (guess
+  the Pokémon, guess its type, spot its family, order its evolution, a memory pairs game, match a
+  sprite to its art, and a swap-to-reassemble jigsaw). This is where new work happens.
 
 Live at **https://arnautresserras.github.io/pokedex/** — the play app is the landing page; the book
 is at `#/browse`.
 
-Design docs: [docs/interactive-spec.md](docs/interactive-spec.md),
-[docs/phase-1-plan.md](docs/phase-1-plan.md). Working notes for contributors and agents:
-[CLAUDE.md](CLAUDE.md).
+Design docs: [docs/implemented/interactive-spec.md](docs/implemented/interactive-spec.md),
+[docs/implemented/phase-1-plan.md](docs/implemented/phase-1-plan.md). Working notes for
+contributors and agents: [CLAUDE.md](CLAUDE.md).
 
 ## Commands
 
